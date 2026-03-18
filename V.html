@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SK Hynix · Data Catalog</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0e17;
+    --surface: #111520;
+    --surface2: #161b2a;
+    --border: rgba(255,255,255,0.07);
+    --border-hover: rgba(99,179,255,0.35);
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --accent-glow: rgba(59,130,246,0.15);
+    --text-primary: #e8edf5;
+    --text-secondary: #8b95a8;
+    --text-muted: #4a5568;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --certified: #a78bfa;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 48px 32px;
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(59,130,246,0.08) 0%, transparent 60%),
+      linear-gradient(180deg, #0b0e17 0%, #0d1220 100%);
+  }
+
+  /* ── Header ── */
+  .catalog-header {
+    max-width: 1160px;
+    margin: 0 auto 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 8px;
+    display: grid; place-items: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px; font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .catalog-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px; font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--text-primary);
+  }
+  .catalog-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-left: auto;
+  }
+
+  /* ── Search bar ── */
+  .search-row {
+    max-width: 1160px;
+    margin: 0 auto 32px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .search-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 18px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input::placeholder { color: var(--text-muted); }
+  .search-input:focus { border-color: var(--accent); }
+  .filter-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 18px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── Grid ── */
+  .card-grid {
+    max-width: 1160px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s, transform 0.2s, box-shadow 0.25s;
+    animation: fadeUp 0.5s ease both;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent-glow) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: inherit;
+  }
+  .card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(99,179,255,0.1);
+  }
+  .card:hover::before { opacity: 1; }
+  .card:nth-child(1) { animation-delay: 0s; }
+  .card:nth-child(2) { animation-delay: 0.07s; }
+  .card:nth-child(3) { animation-delay: 0.14s; }
+  .card:nth-child(4) { animation-delay: 0.21s; }
+  .card:nth-child(5) { animation-delay: 0.28s; }
+  .card:nth-child(6) { animation-delay: 0.35s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Card Header ── */
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .card-icon {
+    width: 40px; height: 40px; flex-shrink: 0;
+    border-radius: 10px;
+    display: grid; place-items: center;
+    font-size: 18px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+  }
+  .card-title-group { flex: 1; min-width: 0; }
+  .card-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+    line-height: 1.3;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .card-domain {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .star-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted); font-size: 16px;
+    transition: color 0.2s, transform 0.2s;
+    padding: 2px;
+    line-height: 1;
+  }
+  .star-btn:hover { color: #f59e0b; transform: scale(1.2); }
+  .star-btn.active { color: #f59e0b; }
+
+  /* ── Badge Row ── */
+  .badge-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .badge {
+    font-size: 10.5px;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    letter-spacing: 0.2px;
+  }
+  .badge-view    { background: rgba(59,130,246,0.12); color: #60a5fa; border-color: rgba(59,130,246,0.25); }
+  .badge-certified { background: rgba(167,139,250,0.12); color: #a78bfa; border-color: rgba(167,139,250,0.25); }
+  .badge-internal  { background: rgba(245,158,11,0.10); color: #fbbf24; border-color: rgba(245,158,11,0.22); }
+  .badge-restricted{ background: rgba(239,68,68,0.10); color: #f87171; border-color: rgba(239,68,68,0.22); }
+  .badge-public    { background: rgba(16,185,129,0.10); color: #34d399; border-color: rgba(16,185,129,0.22); }
+  .badge-trending  { background: rgba(251,113,133,0.10); color: #fb7185; border-color: rgba(251,113,133,0.22); }
+
+  /* ── Description ── */
+  .card-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 18px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ── Metrics ── */
+  .metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .metric {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+  }
+  .metric-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .metric-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .metric-value.green { color: var(--green); }
+  .metric-value.yellow { color: var(--yellow); }
+
+  /* ── Quality bar ── */
+  .quality-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .quality-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    white-space: nowrap;
+  }
+  .quality-bar-bg {
+    flex: 1;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .quality-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 1s ease;
+  }
+  .quality-pct {
+    font-size: 11.5px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+  }
+
+  /* ── Tags ── */
+  .tag-row {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 4px;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Footer ── */
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .consumer-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .avatar-stack {
+    display: flex;
+  }
+  .avatar {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--surface);
+    margin-right: -6px;
+    font-size: 9px;
+    display: grid; place-items: center;
+    font-weight: 600;
+    color: #fff;
+  }
+  .consumer-count {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-left: 10px;
+  }
+  .freshness {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .freshness-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    animation: pulse 2s infinite;
+  }
+  .freshness-dot.stale { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* ── Modal Overlay ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .modal {
+    background: var(--surface);
+    border: 1px solid rgba(99,179,255,0.2);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 680px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    transform: scale(0.96) translateY(10px);
+    transition: transform 0.25s;
+    padding: 32px;
+  }
+  .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; width: 32px; height: 32px;
+    display: grid; place-items: center;
+    cursor: pointer; color: var(--text-muted);
+    font-size: 16px; transition: all 0.2s;
+  }
+  .modal-close:hover { color: var(--text-primary); border-color: var(--accent); }
+  .modal-header { margin-bottom: 24px; position: relative; }
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px; font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .modal-subtitle { font-size: 13px; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; }
+  .modal-section { margin-bottom: 24px; }
+  .modal-section-title {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .detail-item {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid var(--border);
+  }
+  .detail-item-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .detail-item-value {
+    font-size: 13px;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  .schema-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+  .schema-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .schema-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .schema-table td:first-child { color: var(--text-primary); font-weight: 500; }
+  .schema-table tr:last-child td { border-bottom: none; }
+  .schema-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .col-type {
+    display: inline-block;
+    padding: 2px 6px;
+    background: rgba(59,130,246,0.1);
+    border-radius: 4px;
+    color: #60a5fa;
+    font-size: 10.5px;
+  }
+  .pk-badge {
+    display: inline-block;
+    padding: 1px 5px;
+    background: rgba(167,139,250,0.12);
+    border-radius: 3px;
+    color: #a78bfa;
+    font-size: 9px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .action-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+  }
+  .btn-primary {
+    flex: 1;
+    padding: 12px;
+    background: var(--accent);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: #2563eb; transform: translateY(-1px); }
+  .btn-secondary {
+    padding: 12px 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-secondary);
+    font-size: 13.5px;
+    cursor: pointer;
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="catalog-header">
+  <div class="logo-mark">SK</div>
+  <div class="catalog-title">Data Catalog</div>
+  <div class="catalog-sub">Data Platform Team · v0.9.2</div>
+</div>
+
+<!-- Search -->
+<div class="search-row">
+  <input class="search-input" placeholder="🔍  데이터 제품 검색  (예: 수율, HBM, Fab 이천)">
+  <button class="filter-btn">도메인 ▾</button>
+  <button class="filter-btn">접근 등급 ▾</button>
+  <button class="filter-btn">Certified ✓</button>
+</div>
+
+<!-- Cards -->
+<div class="card-grid">
+
+  <!-- Card 1 -->
+  <div class="card" onclick="openModal('yield')">
+    <div class="card-header">
+      <div class="card-icon">⚙️</div>
+      <div class="card-title-group">
+        <div class="card-name">생산 수율 일별 집계</div>
+        <div class="card-domain">FAB_OPS · Data Platform팀</div>
+      </div>
+      <button class="star-btn active" onclick="event.stopPropagation(); this.classList.toggle('active')">★</button>
+    </div>
+    <div class="badge-row">
+      <span class="badge badge-view">VIEW</span>
+      <span class="badge badge-certified">✦ Certified</span>
+      <span class="badge badge-internal">Internal</span>
+    </div>
+    <div class="card-desc">
+      Fab별 일별 수율 데이터를 집계한 뷰. MES 원본 데이터 기반으로 공정 단계별 수율 추이 분석에 활용됩니다.
+    </div>
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-label">Freshness</div>
+        <div class="metric-value green">1시간 전</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Coverage</div>
+        <div class="metric-value">2022-01~</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Consumer</div>
+        <div class="metric-value">23팀</div>
+      </div>
+    </div>
+    <div class="quality-row">
+      <span class="quality-label">QUALITY</span>
+      <div class="quality-bar-bg"><div class="quality-bar-fill" style="width:97%"></div></div>
+      <span class="quality-pct" style="color:var(--green)">97%</span>
+    </div>
+    <div class="tag-row">
+      <span class="tag">#수율</span>
+      <span class="tag">#HBM</span>
+      <span class="tag">#Fab이천</span>
+      <span class="tag">#MES연계</span>
+    </div>
+    <div class="card-footer">
+      <div class="consumer-info">
+        <div class="avatar-stack">
+          <div class="avatar" style="background:#3b82f6">K</div>
+          <div class="avatar" style="background:#8b5cf6">P</div>
+          <div class="avatar" style="background:#06b6d4">L</div>
+        </div>
+        <span class="consumer-count">+20 팀</span>
+      </div>
+      <div class="freshness">
+        <div class="freshness-dot"></div>
+        Daily 03:00
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="card" onclick="openModal('equipment')">
+    <div class="card-header">
+      <div class="card-icon">🏭</div>
+      <div class="card-title-group">
+        <div class="card-name">장비 가동률 시간별 현황</div>
+        <div class="card-domain">EQUIPMENT_MGT · 설비팀</div>
+      </div>
+      <button class="star-btn" onclick="event.stopPropagation(); this.classList.toggle('active')">★</button>
+    </div>
+    <div class="badge-row">
+      <span class="badge badge-view">VIEW</span>
+      <span class="badge badge-trending">🔥 Trending</span>
+      <span class="badge badge-restricted">Restricted</span>
+    </div>
+    <div class="card-desc">
+      전 Fab 장비의 시간별 가동률 및 다운타임 기록. 장비 PM 스케줄 최적화 및 이상 감지에 사용됩니다.
+    </div>
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-label">Freshness</div>
+        <div class="metric-value green">15분 전</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Coverage</div>
+        <div class="metric-value">2023-06~</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Consumer</div>
+        <div class="metric-value">11팀</div>
+      </div>
+    </div>
+    <div class="quality-row">
+      <span class="quality-label">QUALITY</span>
+      <div class="quality-bar-bg"><div class="quality-bar-fill" style="width:91%"></div></div>
+      <span class="quality-pct" style="color:var(--accent)">91%</span>
+    </div>
+    <div class="tag-row">
+      <span class="tag">#장비</span>
+      <span class="tag">#가동률</span>
+      <span class="tag">#Fab청주</span>
+      <span class="tag">#실시간</span>
+    </div>
+    <div class="card-footer">
+      <div class="consumer-info">
+        <div class="avatar-stack">
+          <div class="avatar" style="background:#ef4444">J</div>
+          <div class="avatar" style="background:#f59e0b">C</div>
+        </div>
+        <span class="consumer-count">+9 팀</span>
+      </div>
+      <div class="freshness">
+        <div class="freshness-dot"></div>
+        Hourly
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="card" onclick="openModal('demand')">
+    <div class="card-header">
+      <div class="card-icon">📊</div>
+      <div class="card-title-group">
+        <div class="card-name">고객사별 수요 예측 월별</div>
+        <div class="card-domain">SALES_OPS · 영업전략팀</div>
+      </div>
+      <button class="star-btn" onclick="event.stopPropagation(); this.classList.toggle('active')">★</button>
+    </div>
+    <div class="badge-row">
+      <span class="badge badge-view">VIEW</span>
+      <span class="badge badge-certified">✦ Certified</span>
+      <span class="badge badge-restricted">Restricted</span>
+    </div>
+    <div class="card-desc">
+      주요 고객사(삼성전자, Apple, NVIDIA 등)의 월별 수요 예측치와 실적을 결합한 뷰입니다.
+    </div>
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-label">Freshness</div>
+        <div class="metric-value yellow">2일 전</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Coverage</div>
+        <div class="metric-value">2021-01~</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Consumer</div>
+        <div class="metric-value">7팀</div>
+      </div>
+    </div>
+    <div class="quality-row">
+      <span class="quality-label">QUALITY</span>
+      <div class="quality-bar-bg"><div class="quality-bar-fill" style="width:85%"></div></div>
+      <span class="quality-pct" style="color:var(--yellow)">85%</span>
+    </div>
+    <div class="tag-row">
+      <span class="tag">#수요예측</span>
+      <span class="tag">#DRAM</span>
+      <span class="tag">#고객사</span>
+    </div>
+    <div class="card-footer">
+      <div class="consumer-info">
+        <div class="avatar-stack">
+          <div class="avatar" style="background:#10b981">Y</div>
+          <div class="avatar" style="background:#6366f1">S</div>
+        </div>
+        <span class="consumer-count">+5 팀</span>
+      </div>
+      <div class="freshness">
+        <div class="freshness-dot stale"></div>
+        Monthly
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="card" onclick="openModal('defect')">
+    <div class="card-header">
+      <div class="card-icon">🔬</div>
+      <div class="card-title-group">
+        <div class="card-name">불량 유형별 발생 현황</div>
+        <div class="card-domain">QUALITY · 품질보증팀</div>
+      </div>
+      <button class="star-btn" onclick="event.stopPropagation(); this.classList.toggle('active')">★</button>
+    </div>
+    <div class="badge-row">
+      <span class="badge badge-view">VIEW</span>
+      <span class="badge badge-public">Public</span>
+    </div>
+    <div class="card-desc">
+      공정 단계별 불량 유형 및 발생 건수를 집계한 뷰. FMEA 분석 및 품질 리포트 자동화에 활용됩니다.
+    </div>
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-label">Freshness</div>
+        <div class="metric-value green">3시간 전</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Coverage</div>
+        <div class="metric-value">2023-01~</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Consumer</div>
+        <div class="metric-value">15팀</div>
+      </div>
+    </div>
+    <div class="quality-row">
+      <span class="quality-label">QUALITY</span>
+      <div class="quality-bar-bg"><div class="quality-bar-fill" style="width:99%"></div></div>
+      <span class="quality-pct" style="color:var(--green)">99%</span>
+    </div>
+    <div class="tag-row">
+      <span class="tag">#불량</span>
+      <span class="tag">#FMEA</span>
+      <span class="tag">#NAND</span>
+      <span class="tag">#품질</span>
+    </div>
+    <div class="card-footer">
+      <div class="consumer-info">
+        <div class="avatar-stack">
+          <div class="avatar" style="background:#a78bfa">H</div>
+          <div class="avatar" style="background:#f59e0b">M</div>
+          <div class="avatar" style="background:#06b6d4">R</div>
+        </div>
+        <span class="consumer-count">+12 팀</span>
+      </div>
+      <div class="freshness">
+        <div class="freshness-dot"></div>
+        Every 3hr
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalContent">
+    <div style="position:relative">
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+
+      <div class="modal-header">
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+          <span class="badge badge-view">VIEW</span>
+          <span class="badge badge-certified">✦ Certified</span>
+          <span class="badge badge-internal">Internal</span>
+        </div>
+        <div class="modal-title" id="modalTitle">생산 수율 일별 집계</div>
+        <div class="modal-subtitle" id="modalSubtitle">FAB_OPS · Data Platform팀 · v2.3</div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">개요</div>
+        <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.75" id="modalDesc">
+          Fab별 공정 단계별 일별 수율 데이터를 집계한 뷰입니다. MES 원본 데이터(fab_mes.yield_raw)를 기반으로 이상치 제거 및 정규화 처리가 적용되어 있습니다. 수율 추이 분석, AI 예측 모델 피처 엔지니어링, 월간 리포트 자동화에 활용됩니다.
+        </p>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">상세 메타데이터</div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-item-label">갱신 주기</div>
+            <div class="detail-item-value">매일 03:00 KST</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-item-label">최근 갱신</div>
+            <div class="detail-item-value">2026-03-18 03:12</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-item-label">데이터 커버리지</div>
+            <div class="detail-item-value">2022-01-01 ~ 현재</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-item-label">예상 Row 수</div>
+            <div class="detail-item-value">~4.2M rows</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-item-label">Upstream</div>
+            <div class="detail-item-value">fab_mes.yield_raw</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-item-label">SLA</div>
+            <div class="detail-item-value">99.5% / 지연 &lt;30분</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-item-label">Fab 범위</div>
+            <div class="detail-item-value">이천 M14/M16, 청주 M15</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-item-label">제품군</div>
+            <div class="detail-item-value">DRAM · HBM · LPDDR</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-item-label">Owner</div>
+            <div class="detail-item-value">김데이터 (Data Platform)</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-item-label">보안 등급</div>
+            <div class="detail-item-value">2급 (사내비밀)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">컬럼 스키마 (주요)</div>
+        <table class="schema-table">
+          <thead>
+            <tr>
+              <th>컬럼명</th>
+              <th>타입</th>
+              <th>설명</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>yield_date <span class="pk-badge">PK</span></td>
+              <td><span class="col-type">DATE</span></td>
+              <td>수율 측정 일자</td>
+            </tr>
+            <tr>
+              <td>fab_code</td>
+              <td><span class="col-type">VARCHAR</span></td>
+              <td>Fab 식별 코드</td>
+            </tr>
+            <tr>
+              <td>process_step</td>
+              <td><span class="col-type">VARCHAR</span></td>
+              <td>공정 단계명</td>
+            </tr>
+            <tr>
+              <td>yield_rate</td>
+              <td><span class="col-type">FLOAT</span></td>
+              <td>수율 (0.0 ~ 1.0)</td>
+            </tr>
+            <tr>
+              <td>wafer_count</td>
+              <td><span class="col-type">INT</span></td>
+              <td>투입 웨이퍼 수</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-primary">🔑 접근 권한 신청</button>
+        <button class="btn-secondary">🔗 Lineage</button>
+        <button class="btn-secondary">👁 Preview</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openModal(type) {
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+  function closeModal(e) {
+    if (e.target === document.getElementById('modalOverlay')) {
+      document.getElementById('modalOverlay').classList.remove('open');
+    }
+  }
+  function closeModalDirect() {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.getElementById('modalOverlay').classList.remove('open');
+  });
+
+  // Animate quality bars on load
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.quality-bar-fill').forEach(bar => {
+      const w = bar.style.width;
+      bar.style.width = '0%';
+      setTimeout(() => bar.style.width = w, 100);
+    });
+  });
+</script>
+</body>
+</html>
