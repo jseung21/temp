@@ -7,36 +7,46 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:        #eef2fa;
-    --surface:   #ffffff;
-    --surface2:  #f5f8fd;
-    --surface3:  #edf1fa;
-    --border:    rgba(30,80,180,0.09);
-    --border2:   rgba(30,80,180,0.16);
-    --blue:      #1a56db;
-    --blue-lt:   #e8effc;
-    --blue-mid:  #3b76ef;
-    --sky:       #0ea5e9;
-    --orange:    #ea6500;
-    --orange-lt: #fff3e6;
-    --orange-md: #fb923c;
-    --green:     #059669;
-    --green-lt:  #e5f7f0;
-    --green-md:  #10b981;
-    --purple:    #7c3aed;
-    --purple-lt: #f2effe;
-    --teal:      #0891b2;
-    --teal-lt:   #e0f5fa;
-    --indigo:    #4338ca;
-    --indigo-lt: #eef2ff;
-    --text:      #0e1e3c;
-    --text-2:    #496080;
-    --text-3:    #8ba0be;
-    --shadow-sm: 0 1px 3px rgba(20,50,120,0.07), 0 2px 10px rgba(20,50,120,0.05);
-    --shadow-md: 0 4px 18px rgba(20,50,120,0.10), 0 1px 4px rgba(20,50,120,0.06);
-    --shadow-lg: 0 8px 40px rgba(20,50,120,0.13), 0 2px 8px rgba(20,50,120,0.06);
+    --bg:         #eef2f8;
+    --surface:    #ffffff;
+    --surface2:   #f4f6fb;
+    --border:     rgba(30,60,120,0.09);
+    --border2:    rgba(30,60,120,0.15);
+
+    /* Hub accent colors */
+    --blue:       #1a56db;
+    --blue-lt:    #e8effc;
+    --blue-mid:   #3b76ef;
+    --sky:        #0ea5e9;
+    --purple:     #7c3aed;
+    --purple-lt:  #f2effe;
+    --green:      #059669;
+    --green-lt:   #e5f7f0;
+    --green-md:   #10b981;
+    --teal:       #0891b2;
+    --teal-lt:    #e0f5fa;
+    --indigo:     #4338ca;
+    --indigo-lt:  #eef2ff;
+
+    /* Gray palette for source/target */
+    --gray-bg:    #f2f4f8;
+    --gray-bd:    rgba(100,120,160,0.18);
+    --gray-icon:  #e8eaf0;
+    --gray-text:  #8a96aa;
+    --gray-sub:   #b0b8c8;
+    --gray-badge: #e4e7ef;
+    --gray-val:   #a0aab8;
+
+    --text:       #0e1e3c;
+    --text-3:     #8ba0be;
+
+    --shadow-sm:  0 1px 3px rgba(20,50,120,0.06), 0 2px 10px rgba(20,50,120,0.04);
+    --shadow-md:  0 4px 18px rgba(20,50,120,0.09), 0 1px 4px rgba(20,50,120,0.05);
+    --shadow-lg:  0 8px 44px rgba(20,50,120,0.13), 0 2px 8px rgba(20,50,120,0.06);
   }
+
   * { margin:0; padding:0; box-sizing:border-box; }
+
   body {
     background: var(--bg);
     color: var(--text);
@@ -46,16 +56,16 @@
   }
   body::before {
     content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
-    background-image:
-      radial-gradient(ellipse 55% 45% at 15% 25%, rgba(26,86,219,0.07) 0%, transparent 60%),
-      radial-gradient(ellipse 40% 35% at 85% 75%, rgba(5,150,105,0.05) 0%, transparent 55%),
-      radial-gradient(ellipse 35% 30% at 70% 10%, rgba(234,101,0,0.04) 0%, transparent 50%);
+    background:
+      radial-gradient(ellipse 50% 40% at 50% 55%, rgba(26,86,219,0.07) 0%, transparent 65%),
+      radial-gradient(ellipse 30% 25% at 15% 30%, rgba(100,120,160,0.04) 0%, transparent 55%),
+      radial-gradient(ellipse 30% 25% at 85% 70%, rgba(100,120,160,0.04) 0%, transparent 55%);
   }
   body::after {
     content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
     background-image:
-      linear-gradient(rgba(26,86,219,0.022) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(26,86,219,0.022) 1px, transparent 1px);
+      linear-gradient(rgba(26,86,219,0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,86,219,0.018) 1px, transparent 1px);
     background-size: 44px 44px;
   }
 
@@ -73,9 +83,9 @@
     width:36px; height:36px;
     background: linear-gradient(135deg, var(--blue), var(--sky));
     border-radius:10px; display:flex; align-items:center; justify-content:center;
-    box-shadow: 0 4px 14px rgba(26,86,219,0.32); font-size:15px; color:#fff;
+    box-shadow: 0 4px 14px rgba(26,86,219,0.3); font-size:15px; color:#fff;
   }
-  .logo-text { font-family:'Syne',sans-serif; font-weight:800; font-size:1.05rem; color:var(--text); letter-spacing:0.2px; }
+  .logo-text { font-family:'Syne',sans-serif; font-weight:800; font-size:1.05rem; color:var(--text); }
   .logo-text em { font-style:normal; color:var(--blue); }
   .header-right { display:flex; align-items:center; gap:20px; }
   .status-pill {
@@ -88,171 +98,223 @@
   @keyframes pulseAnim { 0%,100%{box-shadow:0 0 0 3px rgba(16,185,129,0.2)} 50%{box-shadow:0 0 0 6px rgba(16,185,129,0.08)} }
   .header-clock { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--text-3); }
 
-  /* ── PAGE HERO ── */
-  .page-hero { position:relative; z-index:10; text-align:center; padding:32px 20px 16px; }
-  .page-hero h1 { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(1.5rem,3vw,2.2rem); color:var(--text); letter-spacing:-0.4px; }
+  /* ── HERO ── */
+  .page-hero { position:relative; z-index:10; text-align:center; padding:30px 20px 14px; }
+  .page-hero h1 { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(1.5rem,3vw,2.1rem); color:var(--text); }
   .page-hero h1 em { font-style:normal; color:var(--blue); position:relative; }
   .page-hero h1 em::after { content:''; position:absolute; bottom:1px; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--blue),var(--sky)); border-radius:2px; opacity:0.3; }
-  .page-hero p { margin-top:7px; font-size:0.8rem; color:var(--text-3); letter-spacing:2px; text-transform:uppercase; }
+  .page-hero p { margin-top:7px; font-size:0.78rem; color:var(--text-3); letter-spacing:2px; text-transform:uppercase; }
 
-  /* ── MAIN LAYOUT ── */
+  /* ── MAIN CANVAS ── */
   .canvas {
     position:relative; z-index:5;
-    max-width:1340px; margin:0 auto;
-    padding: 16px 28px 20px;
+    max-width:1360px; margin:0 auto;
+    padding: 14px 28px 20px;
     display:grid;
-    grid-template-columns: 210px 72px 1fr 72px 130px;
+    grid-template-columns: 190px 64px 1fr 64px 190px;
     align-items:center;
-    min-height:560px;
+    min-height:520px;
+    gap:0;
   }
-  .col-sources  { grid-column:1; display:flex; flex-direction:column; gap:14px; }
-  .col-left     { grid-column:2; height:100%; min-height:480px; position:relative; }
-  .col-hub      { grid-column:3; display:flex; align-items:stretch; justify-content:center; }
-  .col-right    { grid-column:4; height:100%; min-height:480px; position:relative; }
-  .col-target   { grid-column:5; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; }
+  .col-sources  { grid-column:1; display:flex; flex-direction:column; gap:12px; }
+  .col-left     { grid-column:2; height:100%; min-height:460px; }
+  .col-hub      { grid-column:3; display:flex; align-items:center; justify-content:center; }
+  .col-right    { grid-column:4; height:100%; min-height:460px; }
+  .col-targets  { grid-column:5; display:flex; flex-direction:column; gap:12px; }
 
-  /* ── SOURCE NODES ── */
+  /* ── GRAY SOURCE NODES ── */
   .node {
-    background:var(--surface); border:1px solid var(--border2);
-    border-radius:12px; padding:14px 16px;
-    box-shadow:var(--shadow-sm); cursor:default;
-    transition:transform 0.25s, box-shadow 0.25s, border-color 0.25s;
-    position:relative; overflow:hidden;
-  }
-  .node::before { content:''; position:absolute; top:0; left:0; bottom:0; width:4px; border-radius:12px 0 0 12px; }
-  .node:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); }
-  .node.source::before { background:linear-gradient(180deg,var(--orange-md),#fbbf24); }
-  .node.source:hover { border-color:rgba(234,101,0,0.28); box-shadow:var(--shadow-md),0 0 0 3px rgba(234,101,0,0.06); }
-  .node-header { display:flex; align-items:center; gap:9px; margin-bottom:7px; }
-  .node-ico { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:1.05rem; flex-shrink:0; }
-  .node.source .node-ico { background:var(--orange-lt); }
-  .node-name { font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem; }
-  .node-type { font-size:0.68rem; color:var(--text-3); margin-top:1px; }
-  .node-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:20px; font-family:'JetBrains Mono',monospace; font-size:0.57rem; text-transform:uppercase; }
-  .node.source .node-badge { background:var(--orange-lt); color:var(--orange); }
-  .node-metric { margin-top:8px; padding-top:7px; border-top:1px solid var(--border); display:flex; gap:12px; }
-  .m-item { font-family:'JetBrains Mono',monospace; font-size:0.57rem; color:var(--text-3); line-height:1.8; }
-  .m-item strong { display:block; font-size:0.7rem; font-weight:500; }
-  .node.source .m-item strong { color:var(--orange); }
-
-  /* ── TARGET DESTINATION (right column) ── */
-  .target-dest {
-    background: var(--surface);
-    border: 1px solid var(--border2);
+    background: var(--gray-bg);
+    border: 1px solid var(--gray-bd);
     border-radius: 12px;
-    padding: 16px 12px;
-    box-shadow: var(--shadow-sm);
-    text-align: center;
-    width: 110px;
+    padding: 13px 15px;
+    box-shadow: 0 1px 4px rgba(100,120,160,0.08);
+    cursor: default;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
   }
-  .target-dest-ico { font-size: 1.4rem; margin-bottom: 6px; }
-  .target-dest-name { font-family:'Syne',sans-serif; font-weight:700; font-size:0.72rem; color:var(--text-2); letter-spacing:0.3px; }
-  .target-dest-sub { font-family:'JetBrains Mono',monospace; font-size:0.55rem; color:var(--text-3); margin-top:3px; }
+  .node::before {
+    content:''; position:absolute; top:0; left:0; bottom:0;
+    width:3px; border-radius:12px 0 0 12px;
+    background: linear-gradient(180deg,var(--gray-sub),var(--gray-badge));
+  }
+  .node:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(100,120,160,0.12); }
 
-  /* ── DATA HUB PANEL ── */
+  .node-header { display:flex; align-items:center; gap:9px; margin-bottom:7px; }
+  .node-ico {
+    width:32px; height:32px; border-radius:8px;
+    background: var(--gray-icon);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1rem; flex-shrink:0;
+    filter: grayscale(1) opacity(0.7);
+  }
+  .node-name { font-family:'Syne',sans-serif; font-weight:700; font-size:0.9rem; color:var(--gray-text); }
+  .node-type { font-size:0.66rem; color:var(--gray-sub); margin-top:1px; }
+  .node-badge {
+    display:inline-flex; align-items:center; gap:4px;
+    padding:2px 8px; border-radius:20px;
+    background: var(--gray-badge); color: var(--gray-text);
+    font-family:'JetBrains Mono',monospace; font-size:0.55rem; text-transform:uppercase;
+  }
+  .node-metric { margin-top:8px; padding-top:7px; border-top:1px solid rgba(100,120,160,0.1); display:flex; gap:12px; }
+  .m-item { font-family:'JetBrains Mono',monospace; font-size:0.55rem; color:var(--gray-sub); line-height:1.8; }
+  .m-item strong { display:block; font-size:0.68rem; font-weight:500; color:var(--gray-val); }
+
+  /* ── TARGET NODES (gray) ── */
+  .target-node {
+    background: var(--gray-bg);
+    border: 1px solid var(--gray-bd);
+    border-radius: 12px;
+    padding: 13px 15px;
+    box-shadow: 0 1px 4px rgba(100,120,160,0.08);
+    cursor:default;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
+    text-align: left;
+  }
+  .target-node::before {
+    content:''; position:absolute; top:0; left:0; bottom:0;
+    width:3px; border-radius:12px 0 0 12px;
+    background: linear-gradient(180deg,var(--gray-sub),var(--gray-badge));
+  }
+  .target-node:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(100,120,160,0.12); }
+  .target-node .node-ico { filter: grayscale(1) opacity(0.65); }
+
+  /* ── DATA HUB ── */
   .hub {
     width: 100%;
-    max-width: 680px;
+    max-width: 720px;
     background: var(--surface);
     border: 1.5px solid var(--border2);
-    border-radius: 20px;
+    border-radius: 22px;
     box-shadow: var(--shadow-lg), 0 0 0 4px rgba(26,86,219,0.04);
     overflow: hidden;
+    position: relative;
   }
 
-  /* Hub top bar */
+  /* Hub header bar */
   .hub-top {
-    background: linear-gradient(130deg, #1648c8 0%, #2563eb 45%, #0891b2 100%);
-    padding: 18px 22px 16px;
-    position: relative; overflow: hidden;
-    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(128deg, #1648c8 0%, #2563eb 50%, #0891b2 100%);
+    padding: 16px 24px 14px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:relative; overflow:hidden;
   }
   .hub-top::before { content:''; position:absolute; top:-40px; right:-20px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,0.08); }
-  .hub-top::after  { content:''; position:absolute; bottom:-25px; left:20px; width:70px; height:70px; border-radius:50%; background:rgba(255,255,255,0.06); }
-  .hub-top-left { position:relative; }
-  .hub-label { font-family:'JetBrains Mono',monospace; font-size:0.57rem; letter-spacing:3px; color:rgba(255,255,255,0.55); text-transform:uppercase; margin-bottom:3px; }
-  .hub-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; color:#fff; }
+  .hub-top::after  { content:''; position:absolute; bottom:-25px; left:15px; width:70px; height:70px; border-radius:50%; background:rgba(255,255,255,0.06); }
+  .hub-label { font-family:'JetBrains Mono',monospace; font-size:0.55rem; letter-spacing:3px; color:rgba(255,255,255,0.55); text-transform:uppercase; margin-bottom:3px; }
+  .hub-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1.15rem; color:#fff; position:relative; }
   .hub-live {
     position:relative;
     background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.28);
     border-radius:20px; padding:4px 12px;
-    font-family:'JetBrains Mono',monospace; font-size:0.58rem; color:#fff;
+    font-family:'JetBrains Mono',monospace; font-size:0.57rem; color:#fff;
     display:flex; align-items:center; gap:5px;
   }
   .live-dot { width:5px; height:5px; border-radius:50%; background:#fff; animation:pulseAnim 1.5s ease-in-out infinite; }
 
-  /* Hub body: two columns */
+  /* Hub body — two columns with divider */
   .hub-body {
-    padding: 18px 20px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 14px;
+    grid-template-columns: 1fr 52px 1fr;
+    padding: 18px 18px 20px;
+    gap: 0;
+    position: relative;
   }
 
-  /* Section headers inside hub */
-  .hub-section-label {
-    font-family:'JetBrains Mono',monospace; font-size:0.57rem;
-    letter-spacing:2px; text-transform:uppercase; color:var(--text-3);
-    margin-bottom:10px; display:flex; align-items:center; gap:6px;
+  /* Section wrapper */
+  .hub-section {
+    display: flex; flex-direction: column; gap: 10px;
   }
-  .hub-section-label::before { content:''; display:inline-block; width:10px; height:2px; border-radius:2px; }
-  .storage-label::before { background:var(--blue); }
-  .service-label::before { background:var(--green-md); }
 
-  /* Storage section spans full width */
-  .hub-storage {
-    grid-column: 1 / -1;
+  .hub-section-header {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 4px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hub-section-icon {
+    width: 26px; height: 26px; border-radius: 7px;
+    display:flex; align-items:center; justify-content:center; font-size:0.85rem;
+  }
+  .storage-section .hub-section-icon { background: var(--blue-lt); }
+  .service-section  .hub-section-icon { background: var(--green-lt); }
+  .hub-section-title {
+    font-family:'Syne',sans-serif; font-weight:700; font-size:0.75rem; letter-spacing:0.3px;
+  }
+  .storage-section .hub-section-title { color: var(--blue); }
+  .service-section  .hub-section-title { color: var(--green); }
+  .hub-section-sub {
+    font-family:'JetBrains Mono',monospace; font-size:0.55rem;
+    color:var(--text-3); letter-spacing:1px; margin-left:auto;
+  }
+
+  /* ── INTERNAL DIVIDER + FLOW ── */
+  .hub-divider {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0; position: relative; padding: 0 4px;
+  }
+  .div-line {
+    flex: 1; width: 2px;
+    background: linear-gradient(180deg, transparent 0%, var(--border2) 20%, var(--border2) 80%, transparent 100%);
+    border-radius: 2px; position: relative; overflow: hidden;
+  }
+  .div-line::after {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 40%;
+    background: linear-gradient(180deg, rgba(26,86,219,0.4), rgba(8,145,178,0.4), transparent);
+    animation: lineFlow 2.4s ease-in-out infinite;
+    border-radius: 2px;
+  }
+  @keyframes lineFlow {
+    0%   { top: -40%; opacity: 0; }
+    20%  { opacity: 1; }
+    80%  { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+
+  .div-arrow-wrap {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 8px 0;
+    position: relative; z-index: 2;
+  }
+  .div-arrow {
+    font-size: 0.7rem; line-height: 1;
+    animation: arrowPop 1.6s ease-in-out infinite;
+  }
+  .div-arrow:nth-child(1) { animation-delay: 0s;    color: rgba(26,86,219,0.5); }
+  .div-arrow:nth-child(2) { animation-delay: 0.25s; color: rgba(8,145,178,0.6); }
+  .div-arrow:nth-child(3) { animation-delay: 0.5s;  color: rgba(16,185,129,0.7); }
+  @keyframes arrowPop {
+    0%,100% { opacity:0.3; transform:translateY(0); }
+    50%     { opacity:1;   transform:translateY(2px); }
+  }
+
+  /* ── COMPONENT CARDS ── */
+  .p-comp {
     background: var(--surface2);
     border: 1px solid var(--border2);
-    border-radius: 14px;
-    padding: 16px;
-  }
-  .storage-comps { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-
-  /* Service section spans full width */
-  .hub-services {
-    grid-column: 1 / -1;
-    background: linear-gradient(135deg, rgba(5,150,105,0.04), rgba(8,145,178,0.04));
-    border: 1px solid rgba(5,150,105,0.18);
-    border-radius: 14px;
-    padding: 16px;
-    position: relative;
-    overflow: hidden;
-  }
-  .hub-services::before {
-    content: '';
-    position: absolute; top:0; left:0; right:0; height:2px; border-radius:14px 14px 0 0;
-    background: linear-gradient(90deg, var(--green-md), var(--teal), var(--indigo));
-  }
-  .service-comps { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
-
-  /* Individual component cards */
-  .p-comp {
-    background: var(--surface);
-    border: 1px solid var(--border2);
     border-radius: 10px;
-    padding: 12px 14px;
+    padding: 11px 13px;
     position: relative; overflow: hidden;
-    transition: all 0.25s;
+    transition: all 0.22s;
+    cursor: default;
   }
-  .p-comp:hover { box-shadow:var(--shadow-sm); transform:translateY(-1px); }
-  .p-comp-top { position:absolute; top:0; left:0; right:0; height:3px; border-radius:10px 10px 0 0; }
-  .p-db    .p-comp-top { background:linear-gradient(90deg,var(--blue),var(--sky)); }
-  .p-kafka .p-comp-top { background:linear-gradient(90deg,var(--purple),#a78bfa); }
-  .p-api   .p-comp-top { background:linear-gradient(90deg,var(--green),var(--green-md)); }
-  .p-conn  .p-comp-top { background:linear-gradient(90deg,var(--teal),var(--sky)); }
-  .p-bridge .p-comp-top { background:linear-gradient(90deg,var(--indigo),var(--blue-mid)); }
+  .p-comp:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+  .p-comp-bar { position:absolute; top:0; left:0; right:0; height:3px; border-radius:10px 10px 0 0; }
+  .p-db    .p-comp-bar { background:linear-gradient(90deg,var(--blue),var(--sky)); }
+  .p-kafka .p-comp-bar { background:linear-gradient(90deg,var(--purple),#a78bfa); }
+  .p-api   .p-comp-bar { background:linear-gradient(90deg,var(--green),var(--green-md)); }
+  .p-conn  .p-comp-bar { background:linear-gradient(90deg,var(--teal),var(--sky)); }
+  .p-bridge .p-comp-bar { background:linear-gradient(90deg,var(--indigo),var(--blue-mid)); }
 
   .p-comp-hd { display:flex; align-items:center; gap:7px; margin-bottom:8px; }
-  .p-ico { width:26px; height:26px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:0.85rem; flex-shrink:0; }
+  .p-ico { width:24px; height:24px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.82rem; flex-shrink:0; }
   .p-db    .p-ico { background:var(--blue-lt); }
   .p-kafka .p-ico { background:var(--purple-lt); }
   .p-api   .p-ico { background:var(--green-lt); }
   .p-conn  .p-ico { background:var(--teal-lt); }
   .p-bridge .p-ico { background:var(--indigo-lt); }
 
-  .p-name { font-family:'Syne',sans-serif; font-weight:700; font-size:0.72rem; letter-spacing:0.3px; }
+  .p-name { font-family:'Syne',sans-serif; font-weight:700; font-size:0.7rem; }
   .p-db    .p-name { color:var(--blue); }
   .p-kafka .p-name { color:var(--purple); }
   .p-api   .p-name { color:var(--green); }
@@ -260,77 +322,77 @@
   .p-bridge .p-name { color:var(--indigo); }
 
   .p-pill {
-    margin-left:auto; padding:2px 7px; border-radius:20px;
-    font-family:'JetBrains Mono',monospace; font-size:0.52rem;
-    animation:fadeAnim 2s ease-in-out infinite;
+    margin-left:auto; padding:1px 7px; border-radius:20px;
+    font-family:'JetBrains Mono',monospace; font-size:0.5rem;
+    animation: fadeAnim 2s ease-in-out infinite;
   }
-  .p-db    .p-pill { background:var(--blue-lt);   color:var(--blue); }
-  .p-kafka .p-pill { background:var(--purple-lt); color:var(--purple); }
-  .p-api   .p-pill { background:var(--green-lt);  color:var(--green); }
-  .p-conn  .p-pill { background:var(--teal-lt);   color:var(--teal); }
+  .p-db    .p-pill { background:var(--blue-lt);    color:var(--blue); }
+  .p-kafka .p-pill { background:var(--purple-lt);  color:var(--purple); }
+  .p-api   .p-pill { background:var(--green-lt);   color:var(--green); }
+  .p-conn  .p-pill { background:var(--teal-lt);    color:var(--teal); }
   .p-bridge .p-pill { background:var(--indigo-lt); color:var(--indigo); }
   @keyframes fadeAnim { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
   .p-stats { display:flex; gap:10px; flex-wrap:wrap; }
-  .p-stat { font-family:'JetBrains Mono',monospace; font-size:0.55rem; color:var(--text-3); }
-  .p-stat strong { display:block; font-size:0.68rem; font-weight:500; margin-top:1px; }
+  .p-stat { font-family:'JetBrains Mono',monospace; font-size:0.54rem; color:var(--text-3); }
+  .p-stat strong { display:block; font-size:0.67rem; font-weight:500; margin-top:1px; }
   .p-db    .p-stat strong { color:var(--blue-mid); }
   .p-kafka .p-stat strong { color:var(--purple); }
   .p-api   .p-stat strong { color:var(--green); }
   .p-conn  .p-stat strong { color:var(--teal); }
   .p-bridge .p-stat strong { color:var(--indigo); }
 
-  /* Kafka bars */
-  .kafka-bars { display:flex; align-items:flex-end; gap:2px; height:16px; margin-top:8px; }
-  .k-bar { flex:1; border-radius:2px 2px 0 0; background:linear-gradient(180deg,#a78bfa,var(--purple)); animation:barA 1.4s ease-in-out infinite; }
-  .k-bar:nth-child(1){height:40%;animation-delay:0s}   .k-bar:nth-child(2){height:72%;animation-delay:.15s}
-  .k-bar:nth-child(3){height:52%;animation-delay:.3s}  .k-bar:nth-child(4){height:88%;animation-delay:.45s}
-  .k-bar:nth-child(5){height:38%;animation-delay:.6s}  .k-bar:nth-child(6){height:65%;animation-delay:.75s}
+  /* Kafka mini-bars */
+  .kafka-bars { display:flex; align-items:flex-end; gap:2px; height:14px; margin-top:7px; }
+  .k-bar { flex:1; border-radius:1px 1px 0 0; background:linear-gradient(180deg,#a78bfa,var(--purple)); animation:barA 1.4s ease-in-out infinite; }
+  .k-bar:nth-child(1){height:40%;animation-delay:0s}  .k-bar:nth-child(2){height:72%;animation-delay:.15s}
+  .k-bar:nth-child(3){height:52%;animation-delay:.3s} .k-bar:nth-child(4){height:88%;animation-delay:.45s}
+  .k-bar:nth-child(5){height:38%;animation-delay:.6s} .k-bar:nth-child(6){height:65%;animation-delay:.75s}
   .k-bar:nth-child(7){height:58%;animation-delay:.9s}
   @keyframes barA { 0%,100%{opacity:.4;transform:scaleY(1)} 50%{opacity:.9;transform:scaleY(1.2)} }
 
-  /* Internal data flow arrow inside hub */
-  .hub-internal-arrow {
-    display:flex; align-items:center; justify-content:center;
-    gap:4px; padding:4px 0 2px;
-    color:var(--text-3); font-size:0.62rem; font-family:'JetBrains Mono',monospace;
-    letter-spacing:1px; text-transform:uppercase;
+  /* ── CANVAS SVG OVERLAY (internal hub flow) ── */
+  .hub-canvas-wrap {
+    position: relative;
+    grid-column: 1 / -1;
   }
-  .hub-internal-arrow .arr { font-size:0.8rem; color:var(--green-md); animation:arrBounce 1.6s ease-in-out infinite; }
-  @keyframes arrBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(3px)} }
+  #internalSvg {
+    position: absolute; top:0; left:0; width:100%; height:100%;
+    pointer-events: none; z-index: 10; overflow: visible;
+  }
+
+  /* ── EXTERNAL SVG FLOW ── */
+  .flow-svg { position:fixed; inset:0; z-index:3; pointer-events:none; width:100%; height:100%; }
 
   /* ── COLUMN LABELS ── */
   .labels-row {
     position:relative; z-index:10;
-    max-width:1340px; margin:0 auto; padding:0 28px;
-    display:grid; grid-template-columns:210px 72px 1fr 72px 130px;
+    max-width:1360px; margin:0 auto; padding:0 28px;
+    display:grid; grid-template-columns:190px 64px 1fr 64px 190px;
   }
-  .col-label { font-family:'JetBrains Mono',monospace; font-size:0.58rem; letter-spacing:2px; text-transform:uppercase; color:var(--text-3); text-align:center; padding-top:10px; }
-  .col-label::before { content:''; display:block; width:26px; height:2px; border-radius:2px; margin:0 auto 7px; }
-  .src-lbl::before { background:linear-gradient(90deg,var(--orange-md),#fbbf24); }
-  .hub-lbl::before { background:linear-gradient(90deg,var(--blue),var(--sky)); }
-  .tgt-lbl::before { background:linear-gradient(90deg,var(--green-md),#34d399); }
-
-  /* ── SVG FLOW ── */
-  .flow-svg { position:fixed; inset:0; z-index:3; pointer-events:none; width:100%; height:100%; }
+  .col-label { font-family:'JetBrains Mono',monospace; font-size:0.56rem; letter-spacing:2px; text-transform:uppercase; color:var(--text-3); text-align:center; padding-top:9px; }
+  .col-label::before { content:''; display:block; width:24px; height:2px; border-radius:2px; margin:0 auto 7px; }
+  .src-lbl::before { background: linear-gradient(90deg,#b0b8c8,#d0d6e0); }
+  .hub-lbl::before { background: linear-gradient(90deg,var(--blue),var(--sky)); }
+  .tgt-lbl::before { background: linear-gradient(90deg,#b0b8c8,#d0d6e0); }
 
   /* ── STATS BAR ── */
   .stats-bar {
     position:fixed; bottom:0; left:0; right:0; z-index:30;
     background:var(--surface); border-top:1px solid var(--border2);
-    box-shadow:0 -3px 16px rgba(20,50,120,0.07);
+    box-shadow:0 -3px 16px rgba(20,50,120,0.06);
     padding:0 40px; height:50px; display:flex; align-items:center;
   }
   .stat-seg { display:flex; align-items:center; gap:9px; padding:0 22px; border-right:1px solid var(--border2); }
   .stat-seg:first-child { padding-left:0; }
-  .stat-icon { font-size:0.95rem; }
-  .stat-label { font-size:0.62rem; color:var(--text-3); font-weight:500; }
-  .stat-value { font-family:'JetBrains Mono',monospace; font-size:0.78rem; font-weight:500; color:var(--blue); }
+  .stat-icon { font-size:0.92rem; }
+  .stat-label { font-size:0.61rem; color:var(--text-3); font-weight:500; }
+  .stat-value { font-family:'JetBrains Mono',monospace; font-size:0.77rem; font-weight:500; color:var(--blue); }
   .stat-value.green { color:var(--green); }
-  .ticker-wrap { margin-left:auto; overflow:hidden; width:280px; font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:var(--text-3); }
+  .ticker-wrap { margin-left:auto; overflow:hidden; width:280px; font-family:'JetBrains Mono',monospace; font-size:0.59rem; color:var(--text-3); }
   .ticker-inner { display:inline-block; white-space:nowrap; animation:ticker 24s linear infinite; }
   @keyframes ticker { from{transform:translateX(280px)} to{transform:translateX(-100%)} }
-  @keyframes dashAnim { from{stroke-dashoffset:30} to{stroke-dashoffset:0} }
+  @keyframes dashAnim { from{stroke-dashoffset:28} to{stroke-dashoffset:0} }
 </style>
 </head>
 <body>
@@ -356,197 +418,213 @@
 <!-- MAIN CANVAS -->
 <div class="canvas">
 
-  <!-- SOURCES -->
+  <!-- ── SOURCES (gray) ── -->
   <div class="col-sources">
-    <div class="node source">
+    <div class="node">
       <div class="node-header">
         <div class="node-ico">🏭</div>
         <div><div class="node-name">M16</div><div class="node-type">Manufacturing System</div></div>
       </div>
-      <span class="node-badge">● Source</span>
+      <span class="node-badge">SOURCE</span>
       <div class="node-metric">
         <div class="m-item">REC/S<strong id="m16-rps">1,203</strong></div>
-        <div class="m-item">STATUS<strong style="color:var(--green)">Active</strong></div>
+        <div class="m-item">STATUS<strong>Active</strong></div>
       </div>
     </div>
 
-    <div class="node source">
+    <div class="node">
       <div class="node-header">
         <div class="node-ico">🔗</div>
         <div><div class="node-name">IC</div><div class="node-type">Integrated Commerce</div></div>
       </div>
-      <span class="node-badge">● Source</span>
+      <span class="node-badge">SOURCE</span>
       <div class="node-metric">
         <div class="m-item">REC/S<strong id="ic-rps">8,400</strong></div>
-        <div class="m-item">STATUS<strong style="color:var(--green)">Active</strong></div>
+        <div class="m-item">STATUS<strong>Active</strong></div>
       </div>
     </div>
 
-    <div class="node source">
+    <div class="node">
       <div class="node-header">
         <div class="node-ico">🌐</div>
         <div><div class="node-name">CJ</div><div class="node-type">Enterprise System</div></div>
       </div>
-      <span class="node-badge">● Source</span>
+      <span class="node-badge">SOURCE</span>
       <div class="node-metric">
         <div class="m-item">REC/S<strong id="cj-rps">540</strong></div>
-        <div class="m-item">STATUS<strong style="color:var(--green)">Active</strong></div>
+        <div class="m-item">STATUS<strong>Active</strong></div>
       </div>
     </div>
   </div>
 
-  <!-- LEFT CONNECTOR SPACE -->
   <div class="col-left"></div>
 
-  <!-- DATA HUB -->
+  <!-- ── DATA HUB ── -->
   <div class="col-hub">
-    <div class="hub">
+    <div class="hub" id="hubPanel">
 
-      <!-- Hub Header -->
       <div class="hub-top">
-        <div class="hub-top-left">
+        <div>
           <div class="hub-label">Core Integration Hub</div>
           <div class="hub-title">Data Hub</div>
         </div>
         <div class="hub-live"><div class="live-dot"></div>LIVE</div>
       </div>
 
-      <!-- Hub Body -->
-      <div class="hub-body">
+      <div class="hub-body" id="hubBody">
 
-        <!-- Storage Layer -->
-        <div class="hub-storage">
-          <div class="hub-section-label storage-label">데이터 저장소 · Storage Layer</div>
-          <div class="storage-comps">
+        <!-- LEFT: Storage -->
+        <div class="hub-section storage-section" id="storageSection">
+          <div class="hub-section-header">
+            <div class="hub-section-icon">🗄️</div>
+            <span class="hub-section-title">저장소</span>
+            <span class="hub-section-sub">Storage Layer</span>
+          </div>
 
-            <!-- DB -->
-            <div class="p-comp p-db">
-              <div class="p-comp-top"></div>
-              <div class="p-comp-hd">
-                <div class="p-ico">🗄️</div>
-                <span class="p-name">Database</span>
-                <span class="p-pill">ACTIVE</span>
-              </div>
-              <div class="p-stats">
-                <div class="p-stat">TABLES<strong id="db-tables">1,284</strong></div>
-                <div class="p-stat">QPS<strong id="db-qps">3,421</strong></div>
-                <div class="p-stat">SIZE<strong>4.7 TB</strong></div>
-              </div>
+          <div class="p-comp p-db">
+            <div class="p-comp-bar"></div>
+            <div class="p-comp-hd">
+              <div class="p-ico">🗄️</div>
+              <span class="p-name">Database</span>
+              <span class="p-pill">ACTIVE</span>
             </div>
-
-            <!-- Kafka -->
-            <div class="p-comp p-kafka">
-              <div class="p-comp-top"></div>
-              <div class="p-comp-hd">
-                <div class="p-ico">⚡</div>
-                <span class="p-name">Kafka Queue</span>
-                <span class="p-pill">STREAM</span>
-              </div>
-              <div class="p-stats">
-                <div class="p-stat">TOPICS<strong>87</strong></div>
-                <div class="p-stat">LAG<strong id="kafka-lag">12ms</strong></div>
-                <div class="p-stat">MSG/S<strong id="kafka-mps">28.4K</strong></div>
-              </div>
-              <div class="kafka-bars">
-                <div class="k-bar"></div><div class="k-bar"></div><div class="k-bar"></div>
-                <div class="k-bar"></div><div class="k-bar"></div><div class="k-bar"></div>
-                <div class="k-bar"></div>
-              </div>
+            <div class="p-stats">
+              <div class="p-stat">TABLES<strong id="db-tables">1,284</strong></div>
+              <div class="p-stat">QPS<strong id="db-qps">3,421</strong></div>
+              <div class="p-stat">SIZE<strong>4.7 TB</strong></div>
             </div>
+          </div>
 
+          <div class="p-comp p-kafka">
+            <div class="p-comp-bar"></div>
+            <div class="p-comp-hd">
+              <div class="p-ico">⚡</div>
+              <span class="p-name">Kafka Queue</span>
+              <span class="p-pill">STREAM</span>
+            </div>
+            <div class="p-stats">
+              <div class="p-stat">TOPICS<strong>87</strong></div>
+              <div class="p-stat">LAG<strong id="kafka-lag">12ms</strong></div>
+              <div class="p-stat">MSG/S<strong id="kafka-mps">28.4K</strong></div>
+            </div>
+            <div class="kafka-bars">
+              <div class="k-bar"></div><div class="k-bar"></div><div class="k-bar"></div>
+              <div class="k-bar"></div><div class="k-bar"></div><div class="k-bar"></div>
+              <div class="k-bar"></div>
+            </div>
           </div>
         </div>
 
-        <!-- Internal arrow -->
-        <div class="hub-internal-arrow" style="grid-column:1/-1">
-          <span class="arr">↓</span>
-          <span>출력 서비스로 전달 &nbsp;·&nbsp; Route to Output Services</span>
-          <span class="arr">↓</span>
+        <!-- CENTER: Divider with animated flow -->
+        <div class="hub-divider">
+          <div class="div-line"></div>
+          <div class="div-arrow-wrap">
+            <div class="div-arrow">›</div>
+            <div class="div-arrow">›</div>
+            <div class="div-arrow">›</div>
+          </div>
+          <div class="div-line"></div>
         </div>
 
-        <!-- Output Services Layer -->
-        <div class="hub-services">
-          <div class="hub-section-label service-label">출력 서비스 · Output Services</div>
-          <div class="service-comps">
+        <!-- RIGHT: Services -->
+        <div class="hub-section service-section" id="serviceSection">
+          <div class="hub-section-header">
+            <div class="hub-section-icon">🔧</div>
+            <span class="hub-section-title">출력 서비스</span>
+            <span class="hub-section-sub">Output Services</span>
+          </div>
 
-            <!-- h0api -->
-            <div class="p-comp p-api">
-              <div class="p-comp-top"></div>
-              <div class="p-comp-hd">
-                <div class="p-ico">🚀</div>
-                <span class="p-name">h-API</span>
-                <span class="p-pill">UP</span>
-              </div>
-              <div class="p-stats">
-                <div class="p-stat">REQ/S<strong id="h0-rps">3,200</strong></div>
-                <div class="p-stat">P99<strong>18ms</strong></div>
-              </div>
+          <div class="p-comp p-api" id="svc-api">
+            <div class="p-comp-bar"></div>
+            <div class="p-comp-hd">
+              <div class="p-ico">🚀</div>
+              <span class="p-name">h-API</span>
+              <span class="p-pill">UP</span>
             </div>
-
-            <!-- h-connect -->
-            <div class="p-comp p-conn">
-              <div class="p-comp-top"></div>
-              <div class="p-comp-hd">
-                <div class="p-ico">🔌</div>
-                <span class="p-name">h-Connect</span>
-                <span class="p-pill">UP</span>
-              </div>
-              <div class="p-stats">
-                <div class="p-stat">MSG/S<strong id="hc-mps">12.1K</strong></div>
-                <div class="p-stat">CONN<strong>2,408</strong></div>
-              </div>
+            <div class="p-stats">
+              <div class="p-stat">REQ/S<strong id="h0-rps">3,200</strong></div>
+              <div class="p-stat">P99<strong>18ms</strong></div>
             </div>
+          </div>
 
-            <!-- h-bridge -->
-            <div class="p-comp p-bridge">
-              <div class="p-comp-top"></div>
-              <div class="p-comp-hd">
-                <div class="p-ico">🌉</div>
-                <span class="p-name">h-Bridge</span>
-                <span class="p-pill">UP</span>
-              </div>
-              <div class="p-stats">
-                <div class="p-stat">EVT/S<strong id="hb-eps">1,840</strong></div>
-                <div class="p-stat">RELAY<strong>OK</strong></div>
-              </div>
+          <div class="p-comp p-conn" id="svc-conn">
+            <div class="p-comp-bar"></div>
+            <div class="p-comp-hd">
+              <div class="p-ico">🔌</div>
+              <span class="p-name">h-Connect</span>
+              <span class="p-pill">UP</span>
             </div>
+            <div class="p-stats">
+              <div class="p-stat">MSG/S<strong id="hc-mps">12.1K</strong></div>
+              <div class="p-stat">CONN<strong>2,408</strong></div>
+            </div>
+          </div>
 
+          <div class="p-comp p-bridge" id="svc-bridge">
+            <div class="p-comp-bar"></div>
+            <div class="p-comp-hd">
+              <div class="p-ico">🌉</div>
+              <span class="p-name">h-Bridge</span>
+              <span class="p-pill">UP</span>
+            </div>
+            <div class="p-stats">
+              <div class="p-stat">EVT/S<strong id="hb-eps">1,840</strong></div>
+              <div class="p-stat">RELAY<strong>OK</strong></div>
+            </div>
           </div>
         </div>
+
+        <!-- Internal SVG (for flows inside hub) -->
+        <svg id="internalSvg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;overflow:visible;"></svg>
 
       </div><!-- /hub-body -->
     </div><!-- /hub -->
-  </div><!-- /col-hub -->
+  </div>
 
-  <!-- RIGHT CONNECTOR SPACE -->
   <div class="col-right"></div>
 
-  <!-- TARGET SYSTEMS (right side) -->
-  <div class="col-target">
-    <div style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;text-align:center;">타겟 시스템</div>
-
-    <div class="target-dest">
-      <div class="target-dest-ico">🏢</div>
-      <div class="target-dest-name">Target A</div>
-      <div class="target-dest-sub">ERP</div>
+  <!-- ── TARGETS (gray) ── -->
+  <div class="col-targets">
+    <div class="target-node">
+      <div class="node-header">
+        <div class="node-ico">🏢</div>
+        <div><div class="node-name">Target A</div><div class="node-type">ERP System</div></div>
+      </div>
+      <span class="node-badge">TARGET</span>
+      <div class="node-metric">
+        <div class="m-item">RECV<strong>1,840</strong></div>
+        <div class="m-item">STATUS<strong>Ready</strong></div>
+      </div>
     </div>
 
-    <div class="target-dest">
-      <div class="target-dest-ico">📊</div>
-      <div class="target-dest-name">Target B</div>
-      <div class="target-dest-sub">BI / DW</div>
+    <div class="target-node">
+      <div class="node-header">
+        <div class="node-ico">📊</div>
+        <div><div class="node-name">Target B</div><div class="node-type">BI / Data Warehouse</div></div>
+      </div>
+      <span class="node-badge">TARGET</span>
+      <div class="node-metric">
+        <div class="m-item">RECV<strong>12,100</strong></div>
+        <div class="m-item">STATUS<strong>Ready</strong></div>
+      </div>
     </div>
 
-    <div class="target-dest">
-      <div class="target-dest-ico">☁️</div>
-      <div class="target-dest-name">Target C</div>
-      <div class="target-dest-sub">Cloud</div>
+    <div class="target-node">
+      <div class="node-header">
+        <div class="node-ico">☁️</div>
+        <div><div class="node-name">Target C</div><div class="node-type">Cloud Platform</div></div>
+      </div>
+      <span class="node-badge">TARGET</span>
+      <div class="node-metric">
+        <div class="m-item">RECV<strong>3,200</strong></div>
+        <div class="m-item">STATUS<strong>Ready</strong></div>
+      </div>
     </div>
   </div>
 
 </div><!-- /canvas -->
 
-<!-- COLUMN LABELS -->
+<!-- LABELS -->
 <div class="labels-row">
   <div class="col-label src-lbl" style="grid-column:1">원천 시스템<br>Source Systems</div>
   <div style="grid-column:2"></div>
@@ -555,7 +633,7 @@
   <div class="col-label tgt-lbl" style="grid-column:5">타겟 시스템<br>Target Systems</div>
 </div>
 
-<!-- SVG FLOW OVERLAY -->
+<!-- EXTERNAL SVG FLOW -->
 <svg class="flow-svg" id="flowSvg"></svg>
 
 <!-- STATS BAR -->
@@ -581,15 +659,15 @@
       ▶ M16→DB: 1,203 rec/s &nbsp;&nbsp;
       ▶ IC→Kafka: 8,400 msg/s &nbsp;&nbsp;
       ▶ CJ→DB: 540 rec/s &nbsp;&nbsp;
-      ▶ Kafka→h-Connect: 12,100 msg/s &nbsp;&nbsp;
       ▶ DB→h-API: 3,200 req/s &nbsp;&nbsp;
+      ▶ Kafka→h-Connect: 12,100 msg/s &nbsp;&nbsp;
       ▶ h-Bridge relay: 1,840 evt/s &nbsp;&nbsp;
     </span>
   </div>
 </div>
 
 <script>
-  // Clock
+  /* ── Clock ── */
   setInterval(() => {
     const kst = new Date(Date.now() + 9*3600000);
     const p = n => String(n).padStart(2,'0');
@@ -597,7 +675,7 @@
       `${p(kst.getUTCHours())}:${p(kst.getUTCMinutes())}:${p(kst.getUTCSeconds())} KST`;
   }, 1000);
 
-  // Live counters
+  /* ── Live counters ── */
   function flicker(id, base, delta) {
     setInterval(() => {
       const el = document.getElementById(id); if(!el) return;
@@ -605,98 +683,169 @@
     }, 1400 + Math.random()*700);
   }
   flicker('m16-rps',1203,90); flicker('ic-rps',8400,420); flicker('cj-rps',540,45);
-  flicker('db-qps',3421,210); flicker('h0-rps',3200,190);
-  setInterval(()=>{ const e=document.getElementById('kafka-lag'); if(e) e.textContent=(8+Math.random()*10).toFixed(0)+'ms'; },1600);
+  flicker('db-qps',3421,210); flicker('h0-rps',3200,190); flicker('hb-eps',1840,130);
+  setInterval(()=>{ const e=document.getElementById('kafka-lag'); if(e) e.textContent=(7+Math.random()*9).toFixed(0)+'ms'; },1600);
   setInterval(()=>{ const e=document.getElementById('kafka-mps'); if(e) e.textContent=(25+Math.random()*6).toFixed(1)+'K'; },1300);
   setInterval(()=>{ const e=document.getElementById('hc-mps');    if(e) e.textContent=(11+Math.random()*2).toFixed(1)+'K'; },1500);
-  flicker('hb-eps',1840,130);
   setInterval(()=>{ const e=document.getElementById('stat-lat');  if(e) e.textContent=(28+Math.random()*14).toFixed(0)+'ms'; },2000);
   setInterval(()=>{ const e=document.getElementById('stat-tp');   if(e) e.textContent=(2.5+Math.random()*0.7).toFixed(2)+' GB/s'; },1800);
 
-  // SVG flow lines
-  function drawFlows() {
-    const svg = document.getElementById('flowSvg');
+  /* ── SVG helpers ── */
+  const NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs) {
+    const e = document.createElementNS(NS, tag);
+    Object.entries(attrs).forEach(([k,v]) => e.setAttribute(k, v));
+    return e;
+  }
+  function rcenter(el) {
+    const r = el.getBoundingClientRect();
+    return { x: r.left+r.width/2, y: r.top+r.height/2, r };
+  }
+  function rlocal(el, ref) {
+    const er = el.getBoundingClientRect();
+    const rr = ref.getBoundingClientRect();
+    return { x: er.left-rr.left+er.width/2, y: er.top-rr.top+er.height/2, w:er.width, h:er.height };
+  }
+
+  /* ── INTERNAL HUB FLOW ── */
+  function drawInternal() {
+    const svg  = document.getElementById('internalSvg');
+    const body = document.getElementById('hubBody');
     svg.innerHTML = `<defs>
-      <marker id="arr-o" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-        <path d="M0,0 L0,6 L8,3 z" fill="rgba(234,101,0,0.6)"/>
+      <filter id="if1"><feGaussianBlur stdDeviation="1.5"/></filter>
+      <marker id="iarr" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto">
+        <path d="M0,0 L0,5 L7,2.5 z" fill="rgba(26,86,219,0.55)"/>
       </marker>
-      <marker id="arr-g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-        <path d="M0,0 L0,6 L8,3 z" fill="rgba(5,150,105,0.6)"/>
-      </marker>
-      <filter id="fo"><feGaussianBlur stdDeviation="2.2"/></filter>
-      <filter id="fg"><feGaussianBlur stdDeviation="2.2"/></filter>
     </defs>`;
 
-    const sources  = document.querySelectorAll('.node.source');
-    const hub      = document.querySelector('.hub');
-    const targets  = document.querySelectorAll('.target-dest');
-    const services = document.querySelectorAll('.hub-services .p-comp');
-    if (!hub) return;
+    const storages = body.querySelectorAll('.storage-section .p-comp');
+    const services = body.querySelectorAll('.service-section .p-comp');
 
-    const hr   = hub.getBoundingClientRect();
-    const hMid = hr.top + hr.height / 2;
-    let idx = 0;
+    // Map each storage → each service with a curved path inside hub
+    const pairs = [
+      [0, 0], // DB → h-API
+      [1, 1], // Kafka → h-Connect
+      [1, 2], // Kafka → h-Bridge
+      [0, 2], // DB → h-Bridge
+    ];
 
-    function makePath(sx,sy,ex,ey,stroke,filter,markerEnd,dur,delay) {
-      const pid = 'fl'+idx++;
-      const mx1 = sx+(ex-sx)*0.55, mx2 = sx+(ex-sx)*0.45;
-      const d = `M${sx},${sy} C${mx1},${sy} ${mx2},${ey} ${ex},${ey}`;
+    let pidx = 0;
+    pairs.forEach(([si, ti], i) => {
+      const src = storages[si], tgt = services[ti];
+      if (!src || !tgt) return;
+
+      const sr = src.getBoundingClientRect();
+      const tr = tgt.getBoundingClientRect();
+      const br = body.getBoundingClientRect();
+
+      const sx = sr.right  - br.left;
+      const sy = sr.top    - br.top + sr.height/2;
+      const ex = tr.left   - br.left;
+      const ey = tr.top    - br.top + tr.height/2;
+      const cx = (sx+ex)/2;
+
+      const d = `M${sx},${sy} C${cx+10},${sy} ${cx-10},${ey} ${ex},${ey}`;
+      const pid = 'ip'+pidx++;
+      const dur = 1.8 + i*0.25;
+      const delay = i*0.45;
+
+      const alphas = ['rgba(26,86,219,0.12)','rgba(8,145,178,0.12)','rgba(16,185,129,0.12)','rgba(67,56,202,0.12)'];
+      const strokes = ['rgba(26,86,219,0.45)','rgba(8,145,178,0.5)','rgba(16,185,129,0.5)','rgba(67,56,202,0.45)'];
 
       // Glow
-      const gl = document.createElementNS('http://www.w3.org/2000/svg','path');
-      gl.setAttribute('d',d); gl.setAttribute('fill','none');
-      gl.setAttribute('stroke',stroke.replace(/[\d.]+\)$/,'0.25)')); gl.setAttribute('stroke-width','6');
-      gl.setAttribute('filter',`url(#${filter})`); svg.appendChild(gl);
+      const gl = el('path',{d, fill:'none', stroke:alphas[i%4], 'stroke-width':'5', filter:'url(#if1)'});
+      svg.appendChild(gl);
 
       // Line
-      const ln = document.createElementNS('http://www.w3.org/2000/svg','path');
-      ln.setAttribute('id',pid); ln.setAttribute('d',d); ln.setAttribute('fill','none');
-      ln.setAttribute('stroke',stroke); ln.setAttribute('stroke-width','2');
-      ln.setAttribute('stroke-dasharray','9 6');
-      if(markerEnd) ln.setAttribute('marker-end',`url(#${markerEnd})`);
-      ln.style.animation=`dashAnim ${dur}s linear ${delay}s infinite`;
+      const ln = el('path',{id:pid, d, fill:'none', stroke:strokes[i%4], 'stroke-width':'1.5',
+        'stroke-dasharray':'7 5', 'marker-end':'url(#iarr)'});
+      ln.style.animation = `dashAnim ${dur}s linear ${delay}s infinite`;
       svg.appendChild(ln);
 
       // Particle
-      [[5,stroke.replace(/rgba\((\d+,\d+,\d+),[\d.]+\)/,'rgba($1,0.85)'),'url(#'+filter+')'],[2.5,'rgba(255,255,255,0.95)','']].forEach(([r,fill,flt])=>{
-        const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
-        c.setAttribute('r',r); c.setAttribute('fill',fill);
-        if(flt) c.setAttribute('filter',flt);
-        const am = document.createElementNS('http://www.w3.org/2000/svg','animateMotion');
-        am.setAttribute('dur',dur+'s'); am.setAttribute('repeatCount','indefinite'); am.setAttribute('begin',delay+'s');
-        const mp = document.createElementNS('http://www.w3.org/2000/svg','mpath');
-        mp.setAttribute('href','#'+pid); am.appendChild(mp); c.appendChild(am); svg.appendChild(c);
+      [[4, strokes[i%4].replace(/[\d.]+\)$/, '0.9)'), 'url(#if1)'],
+       [2, 'rgba(255,255,255,0.95)', '']].forEach(([r, fill, flt]) => {
+        const c = el('circle', {r, fill});
+        if (flt) c.setAttribute('filter', flt);
+        const am = el('animateMotion', {dur:`${dur}s`, repeatCount:'indefinite', begin:`${delay}s`});
+        const mp = el('mpath', {}); mp.setAttribute('href', '#'+pid);
+        am.appendChild(mp); c.appendChild(am); svg.appendChild(c);
       });
-    }
-
-    // Source → Hub
-    sources.forEach((src,i) => {
-      const sr = src.getBoundingClientRect();
-      makePath(sr.right, sr.top+sr.height/2, hr.left, hMid,
-        'rgba(234,101,0,0.55)','fo','arr-o', 2.2+i*0.28, i*0.55);
-    });
-
-    // Hub services → Targets
-    const serviceEls = document.querySelectorAll('.hub-services .p-comp');
-    targets.forEach((tgt,i) => {
-      const tr = tgt.getBoundingClientRect();
-      const svc = serviceEls[i % serviceEls.length];
-      if(!svc) return;
-      const sr = svc.getBoundingClientRect();
-      const sx = hr.right, sy = sr.top + sr.height/2;
-      makePath(sx, sy, tr.left, tr.top+tr.height/2,
-        'rgba(5,150,105,0.55)','fg','arr-g', 2.0+i*0.35, i*0.5);
     });
   }
 
-  window.addEventListener('load', () => setTimeout(drawFlows, 400));
-  window.addEventListener('resize', () => setTimeout(drawFlows, 100));
+  /* ── EXTERNAL FLOW (source→hub, hub→target) ── */
+  function drawExternal() {
+    const svg = document.getElementById('flowSvg');
+    svg.innerHTML = `<defs>
+      <filter id="fo"><feGaussianBlur stdDeviation="2"/></filter>
+      <filter id="fg"><feGaussianBlur stdDeviation="2"/></filter>
+      <marker id="arr-o" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto">
+        <path d="M0,0 L0,5 L7,2.5 z" fill="rgba(140,155,180,0.55)"/>
+      </marker>
+      <marker id="arr-g" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto">
+        <path d="M0,0 L0,5 L7,2.5 z" fill="rgba(140,155,180,0.55)"/>
+      </marker>
+    </defs>`;
 
-  // Entrance
-  document.querySelectorAll('.node, .hub, .target-dest').forEach((el,i) => {
-    el.style.opacity='0'; el.style.transform='translateY(14px)';
-    el.style.transition='opacity 0.5s ease, transform 0.5s ease';
-    setTimeout(()=>{ el.style.opacity='1'; el.style.transform=''; }, 150+i*90);
+    const sources = document.querySelectorAll('.node');
+    const targets = document.querySelectorAll('.target-node');
+    const hub     = document.getElementById('hubPanel');
+    if (!hub) return;
+    const hr  = hub.getBoundingClientRect();
+    const mid = hr.top + hr.height/2;
+    let idx   = 0;
+
+    function addFlow(sx,sy,ex,ey,color,filterID,markerID,dur,delay) {
+      const pid = 'xfl'+idx++;
+      const mx  = sx+(ex-sx)*0.55;
+      const d   = `M${sx},${sy} C${mx},${sy} ${mx},${ey} ${ex},${ey}`;
+
+      const gl = el('path',{d,fill:'none',stroke:color.replace(/[\d.]+\)$/,'0.2)'), 'stroke-width':'5', filter:`url(#${filterID})`});
+      svg.appendChild(gl);
+
+      const ln = el('path',{id:pid, d, fill:'none', stroke:color, 'stroke-width':'1.5',
+        'stroke-dasharray':'8 6', 'marker-end':`url(#${markerID})`});
+      ln.style.animation = `dashAnim ${dur}s linear ${delay}s infinite`;
+      svg.appendChild(ln);
+
+      [[4, color.replace(/[\d.]+\)$/,'0.8)'), `url(#${filterID})`],
+       [2, 'rgba(255,255,255,0.85)', '']].forEach(([r,fill,flt])=>{
+        const c = el('circle',{r,fill}); if(flt) c.setAttribute('filter',flt);
+        const am = el('animateMotion',{dur:`${dur}s`,repeatCount:'indefinite',begin:`${delay}s`});
+        const mp = el('mpath',{}); mp.setAttribute('href','#'+pid);
+        am.appendChild(mp); c.appendChild(am); svg.appendChild(c);
+      });
+    }
+
+    // Sources → Hub  (gray)
+    sources.forEach((src,i) => {
+      const sr = src.getBoundingClientRect();
+      addFlow(sr.right, sr.top+sr.height/2, hr.left, mid,
+        'rgba(160,170,190,0.6)', 'fo', 'arr-o', 2.2+i*0.28, i*0.55);
+    });
+
+    // Hub → Targets  (gray)
+    targets.forEach((tgt,i) => {
+      const tr = tgt.getBoundingClientRect();
+      addFlow(hr.right, mid, tr.left, tr.top+tr.height/2,
+        'rgba(160,170,190,0.6)', 'fg', 'arr-g', 2.0+i*0.35, i*0.5);
+    });
+  }
+
+  function drawAll() {
+    drawExternal();
+    drawInternal();
+  }
+
+  window.addEventListener('load', () => setTimeout(drawAll, 450));
+  window.addEventListener('resize', () => setTimeout(drawAll, 100));
+
+  /* ── Entrance animation ── */
+  document.querySelectorAll('.node, .hub, .target-node').forEach((e,i)=>{
+    e.style.opacity='0'; e.style.transform='translateY(14px)';
+    e.style.transition='opacity 0.5s ease, transform 0.5s ease';
+    setTimeout(()=>{ e.style.opacity='1'; e.style.transform=''; }, 150+i*90);
   });
 </script>
 </body>
