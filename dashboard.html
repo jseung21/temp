@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>부서별 시스템 사용량 대시보드</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #0a0e1a;
+    --bg-card: #111827;
+    --border: #1e2a3a;
+    --text-primary: #e8edf5;
+    --text-secondary: #7a8ba8;
+    --text-muted: #4a5a72;
+    --accent-a: #ff4d6a;
+    --accent-b: #3b82f6;
+    --accent-c: #10b981;
+    --accent-d: #f59e0b;
+    --accent-e: #8b5cf6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  .dashboard { max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
+
+  .header { margin-bottom: 36px; position: relative; }
+  .header::after {
+    content: ''; position: absolute; bottom: -16px; left: 0;
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, var(--accent-b), transparent 70%);
+  }
+  .header h1 {
+    font-size: 28px; font-weight: 900; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #e8edf5, #7a8ba8);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .header p { color: var(--text-secondary); font-size: 14px; margin-top: 6px; font-weight: 300; }
+  .header .period {
+    display: inline-block; margin-top: 10px; padding: 4px 14px;
+    background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 20px; font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--accent-b);
+  }
+
+  /* Summary Cards */
+  .summary-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 32px; }
+  .summary-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 18px;
+    position: relative; overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .summary-card:hover { transform: translateY(-2px); border-color: rgba(59,130,246,0.3); }
+  .summary-card .dept-label {
+    font-size: 11px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 8px;
+  }
+  .summary-card .dept-value {
+    font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 600;
+  }
+  .summary-card .dept-bar {
+    position: absolute; top: 0; left: 0; height: 3px; width: 100%; border-radius: 0 0 3px 0;
+  }
+
+  /* Tabs */
+  .tab-nav {
+    display: flex; gap: 4px; margin-bottom: 24px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 4px; width: fit-content;
+  }
+  .tab-btn {
+    padding: 8px 20px; border: none; background: transparent;
+    color: var(--text-secondary); font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px; font-weight: 500; border-radius: 8px;
+    cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.03); }
+  .tab-btn.active { background: rgba(59,130,246,0.15); color: var(--accent-b); }
+
+  /* Chart sections */
+  .chart-section {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 28px; margin-bottom: 24px;
+    animation: fadeInUp 0.5s ease both;
+  }
+  .chart-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .chart-desc {
+    font-size: 12px; color: var(--text-secondary);
+    margin-bottom: 16px; line-height: 1.6;
+  }
+  .chart-desc code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(59,130,246,0.1); padding: 1px 6px; border-radius: 4px;
+    font-size: 11px; color: var(--accent-b);
+  }
+
+  .chart-container { width: 100%; height: 520px; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .summary-card { animation: fadeInUp 0.4s ease both; }
+  .summary-card:nth-child(2) { animation-delay: 0.05s; }
+  .summary-card:nth-child(3) { animation-delay: 0.1s; }
+  .summary-card:nth-child(4) { animation-delay: 0.15s; }
+  .summary-card:nth-child(5) { animation-delay: 0.2s; }
+
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 10px; font-family: 'JetBrains Mono', monospace;
+    background: rgba(59,130,246,0.1); color: var(--accent-b);
+    margin-left: 8px; vertical-align: middle;
+  }
+
+  @media (max-width: 768px) {
+    .summary-row { grid-template-columns: repeat(2, 1fr); }
+    .tab-nav { flex-wrap: wrap; }
+    .chart-container { height: 400px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="dashboard">
+  <div class="header">
+    <h1>부서별 시스템 사용량 대시보드 <span class="badge">ECharts</span></h1>
+    <p>5개 부서 × 5개 시스템 — 월간 사용량 현황</p>
+    <span class="period">2026-03-01 ~ 2026-03-31</span>
+  </div>
+
+  <div class="summary-row" id="summaryCards"></div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="logScale">① Log Scale Stacked Bar</button>
+    <button class="tab-btn" data-tab="percent">② 100% 정규화 Stacked Bar</button>
+    <button class="tab-btn" data-tab="heatmap">③ 히트맵</button>
+  </div>
+
+  <div class="tab-content active" id="tab-logScale">
+    <div class="chart-section">
+      <div class="chart-title">📊 Log Scale Stacked Bar — 부서별 시스템 사용량</div>
+      <div class="chart-desc">
+        X축은 <strong>부서</strong>, 하나의 막대 안에 <strong>시스템 1~5</strong>가 쌓여 있습니다.
+        Y축은 <code>log₁₀</code> 스케일로, A부서의 압도적 수치와 B~E부서의 차이를 동시에 확인할 수 있습니다.
+      </div>
+      <div class="chart-container" id="chartLog"></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-percent">
+    <div class="chart-section">
+      <div class="chart-title">📊 100% Stacked Bar — 부서 내 시스템 비율</div>
+      <div class="chart-desc">
+        각 부서의 전체 사용량을 100%로 놓고, <strong>시스템별 점유 비율(%)</strong>을 보여줍니다.
+        절대량 차이를 무시하고 부서 내 시스템 구성 비율에 집중할 수 있습니다.
+      </div>
+      <div class="chart-container" id="chartPercent"></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-heatmap">
+    <div class="chart-section">
+      <div class="chart-title">🔥 히트맵 (Log 색상 매핑)</div>
+      <div class="chart-desc">
+        색상 강도에 <code>log₁₀</code>를 적용하여 극단적 편차가 있어도 모든 부서·시스템의 패턴을 한눈에 비교할 수 있습니다.
+      </div>
+      <div class="chart-container" id="chartHeatmap"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// DATA
+// ══════════════════════════════════════
+const departments = ['A부서', 'B부서', 'C부서', 'D부서', 'E부서'];
+const deptColors = ['#ff4d6a', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
+const systems = ['시스템1', '시스템2', '시스템3', '시스템4', '시스템5'];
+const sysColors = ['#ff6b8a', '#60a5fa', '#34d399', '#fbbf24', '#a78bfa'];
+
+// [dept][sys] — A부서가 압도적으로 높음
+const data = [
+  [125000, 98000, 142000, 87000, 110000],
+  [1200,   850,   1500,   920,   1100],
+  [680,    520,   890,    450,   710],
+  [340,    280,   410,    190,   360],
+  [150,    90,    220,    110,   180],
+];
+
+function formatNum(n) { return n.toLocaleString('ko-KR'); }
+
+// ── Summary Cards ──
+const cardColors = deptColors;
+const summaryEl = document.getElementById('summaryCards');
+departments.forEach((dept, i) => {
+  const total = data[i].reduce((a, b) => a + b, 0);
+  summaryEl.innerHTML += `
+    <div class="summary-card">
+      <div class="dept-bar" style="background:${cardColors[i]}"></div>
+      <div class="dept-label">${dept}</div>
+      <div class="dept-value" style="color:${cardColors[i]}">${formatNum(total)}</div>
+    </div>`;
+});
+
+// ── Tab Switching ──
+const charts = {};
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    const tabId = btn.dataset.tab;
+    document.getElementById('tab-' + tabId).classList.add('active');
+    // ECharts needs resize when container becomes visible
+    Object.values(charts).forEach(c => c.resize());
+  });
+});
+
+// ══════════════════════════════════════
+// CHART 1: LOG SCALE STACKED BAR
+// ══════════════════════════════════════
+function initLogChart() {
+  const el = document.getElementById('chartLog');
+  const chart = echarts.init(el, null, { renderer: 'canvas' });
+  charts.log = chart;
+
+  // ECharts의 log축은 stacked bar에서 정확한 시각적 쌓기가 어려우므로
+  // 데이터를 log 변환하여 커스텀 처리
+  // 방법: 각 시스템 구간의 높이 = log(누적합) - log(이전 누적합)
+  // 실제 값은 label/tooltip에 원본 표시
+
+  const seriesList = systems.map((sys, si) => {
+    const vals = departments.map((_, di) => {
+      let prevSum = 0;
+      for (let k = 0; k < si; k++) prevSum += data[di][k];
+      const curSum = prevSum + data[di][si];
+      const logPrev = prevSum > 0 ? Math.log10(prevSum) : 0;
+      const logCur = Math.log10(curSum);
+      return {
+        value: +(logCur - logPrev).toFixed(6),
+        rawValue: data[di][si],
+        rawCumSum: curSum,
+        rawPrevSum: prevSum
+      };
+    });
+
+    return {
+      name: sys,
+      type: 'bar',
+      stack: 'total',
+      barWidth: '50%',
+      itemStyle: {
+        color: sysColors[si],
+        borderColor: 'rgba(10,14,26,0.5)',
+        borderWidth: 1
+      },
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 10,
+          shadowColor: 'rgba(0,0,0,0.3)',
+          borderColor: '#fff',
+          borderWidth: 1.5
+        }
+      },
+      label: {
+        show: true,
+        position: 'inside',
+        color: '#fff',
+        fontSize: 11,
+        fontWeight: 600,
+        fontFamily: 'JetBrains Mono',
+        formatter: function(params) {
+          const raw = params.data.rawValue;
+          if (params.data.value < 0.15) return '';
+          return raw >= 1000 ? Math.round(raw / 1000) + 'K' : raw;
+        }
+      },
+      data: vals
+    };
+  });
+
+  // Y축 tick을 실제 log 값 위치에 배치하되 라벨은 원본 값으로 표시
+  const maxLog = Math.ceil(Math.log10(Math.max(...data.map(r => r.reduce((a,b) => a+b, 0))) * 1.15));
+
+  const option = {
+    backgroundColor: 'transparent',
+    textStyle: { fontFamily: 'Noto Sans KR, JetBrains Mono, sans-serif' },
+    tooltip: {
+      trigger: 'item',
+      backgroundColor: '#1a2332',
+      borderColor: '#1e2a3a',
+      borderWidth: 1,
+      textStyle: { color: '#e8edf5', fontSize: 12, fontFamily: 'Noto Sans KR' },
+      formatter: function(params) {
+        const d = params.data;
+        return `<div style="font-weight:700;color:${deptColors[params.dataIndex]};margin-bottom:4px">${departments[params.dataIndex]}</div>` +
+          `<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${params.color};margin-right:6px"></span>` +
+          `${params.seriesName}<br/>` +
+          `<span style="font-family:JetBrains Mono;font-weight:600;color:#3b82f6;font-size:14px">${formatNum(d.rawValue)}</span>` +
+          `<br/><span style="color:#4a5a72;font-size:10px">누적합: ${formatNum(d.rawCumSum)}</span>`;
+      }
+    },
+    legend: {
+      data: systems,
+      bottom: 0,
+      textStyle: { color: '#7a8ba8', fontSize: 12 },
+      icon: 'roundRect',
+      itemWidth: 14,
+      itemHeight: 10,
+      itemGap: 20
+    },
+    grid: {
+      top: 40,
+      left: 80,
+      right: 40,
+      bottom: 60
+    },
+    xAxis: {
+      type: 'category',
+      data: departments,
+      axisLabel: {
+        color: function(value, index) { return deptColors[index]; },
+        fontSize: 14,
+        fontWeight: 700
+      },
+      axisLine: { lineStyle: { color: '#1e2a3a' } },
+      axisTick: { show: false }
+    },
+    yAxis: {
+      type: 'value',
+      name: '사용량 (log₁₀ scale)',
+      nameTextStyle: { color: '#4a5a72', fontSize: 11, padding: [0, 0, 0, -20] },
+      max: maxLog,
+      min: 0,
+      splitNumber: maxLog,
+      axisLabel: {
+        color: '#4a5a72',
+        fontSize: 11,
+        fontFamily: 'JetBrains Mono',
+        formatter: function(val) {
+          if (val === 0) return '0';
+          if (Number.isInteger(val) && val >= 1 && val <= maxLog) {
+            return formatNum(Math.pow(10, val));
+          }
+          return '';
+        }
+      },
+      splitLine: { lineStyle: { color: '#1e2a3a', type: 'solid' } },
+      axisLine: { show: false },
+      axisTick: { show: false }
+    },
+    series: seriesList,
+    animationDuration: 800,
+    animationEasing: 'cubicOut'
+  };
+
+  chart.setOption(option);
+}
+
+// ══════════════════════════════════════
+// CHART 2: 100% STACKED BAR
+// ══════════════════════════════════════
+function initPercentChart() {
+  const el = document.getElementById('chartPercent');
+  const chart = echarts.init(el, null, { renderer: 'canvas' });
+  charts.percent = chart;
+
+  const deptTotals = data.map(row => row.reduce((a, b) => a + b, 0));
+
+  const seriesList = systems.map((sys, si) => ({
+    name: sys,
+    type: 'bar',
+    stack: 'total',
+    barWidth: '50%',
+    itemStyle: {
+      color: sysColors[si],
+      borderColor: 'rgba(10,14,26,0.4)',
+      borderWidth: 1
+    },
+    emphasis: {
+      itemStyle: {
+        shadowBlur: 10,
+        shadowColor: 'rgba(0,0,0,0.3)',
+        borderColor: '#fff',
+        borderWidth: 1.5
+      }
+    },
+    label: {
+      show: true,
+      position: 'inside',
+      color: '#fff',
+      fontSize: 11,
+      fontWeight: 600,
+      fontFamily: 'JetBrains Mono',
+      formatter: function(params) {
+        const pct = params.data.pct;
+        if (pct < 5) return '';
+        return pct.toFixed(1) + '%';
+      }
+    },
+    data: departments.map((_, di) => {
+      const pct = (data[di][si] / deptTotals[di]) * 100;
+      return {
+        value: +pct.toFixed(2),
+        pct: pct,
+        rawValue: data[di][si],
+        rawTotal: deptTotals[di]
+      };
+    })
+  }));
+
+  const option = {
+    backgroundColor: 'transparent',
+    textStyle: { fontFamily: 'Noto Sans KR, JetBrains Mono, sans-serif' },
+    tooltip: {
+      trigger: 'item',
+      backgroundColor: '#1a2332',
+      borderColor: '#1e2a3a',
+      borderWidth: 1,
+      textStyle: { color: '#e8edf5', fontSize: 12, fontFamily: 'Noto Sans KR' },
+      formatter: function(params) {
+        const d = params.data;
+        return `<div style="font-weight:700;color:${deptColors[params.dataIndex]};margin-bottom:4px">${departments[params.dataIndex]}</div>` +
+          `<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${params.color};margin-right:6px"></span>` +
+          `${params.seriesName}<br/>` +
+          `<span style="font-family:JetBrains Mono;font-weight:600;color:#3b82f6;font-size:14px">${d.pct.toFixed(1)}%</span>` +
+          `<span style="color:#4a5a72;margin-left:8px">(${formatNum(d.rawValue)})</span>` +
+          `<br/><span style="color:#4a5a72;font-size:10px">부서 합계: ${formatNum(d.rawTotal)}</span>`;
+      }
+    },
+    legend: {
+      data: systems,
+      bottom: 0,
+      textStyle: { color: '#7a8ba8', fontSize: 12 },
+      icon: 'roundRect',
+      itemWidth: 14,
+      itemHeight: 10,
+      itemGap: 20
+    },
+    grid: {
+      top: 40,
+      left: 60,
+      right: 40,
+      bottom: 60
+    },
+    xAxis: {
+      type: 'category',
+      data: departments,
+      axisLabel: {
+        color: function(value, index) { return deptColors[index]; },
+        fontSize: 14,
+        fontWeight: 700
+      },
+      axisLine: { lineStyle: { color: '#1e2a3a' } },
+      axisTick: { show: false }
+    },
+    yAxis: {
+      type: 'value',
+      name: '비율 (%)',
+      nameTextStyle: { color: '#4a5a72', fontSize: 11 },
+      max: 100,
+      axisLabel: {
+        color: '#4a5a72',
+        fontSize: 11,
+        fontFamily: 'JetBrains Mono',
+        formatter: '{value}%'
+      },
+      splitLine: { lineStyle: { color: '#1e2a3a' } },
+      axisLine: { show: false },
+      axisTick: { show: false }
+    },
+    series: seriesList,
+    animationDuration: 800,
+    animationEasing: 'cubicOut'
+  };
+
+  chart.setOption(option);
+}
+
+// ══════════════════════════════════════
+// CHART 3: HEATMAP
+// ══════════════════════════════════════
+function initHeatmap() {
+  const el = document.getElementById('chartHeatmap');
+  const chart = echarts.init(el, null, { renderer: 'canvas' });
+  charts.heatmap = chart;
+
+  // Build heatmap data: [sysIndex, deptIndex, value]
+  const heatData = [];
+  const allVals = data.flat();
+  const minVal = Math.min(...allVals);
+  const maxVal = Math.max(...allVals);
+
+  departments.forEach((dept, di) => {
+    systems.forEach((sys, si) => {
+      heatData.push([si, di, data[di][si]]);
+    });
+  });
+
+  const option = {
+    backgroundColor: 'transparent',
+    textStyle: { fontFamily: 'Noto Sans KR, JetBrains Mono, sans-serif' },
+    tooltip: {
+      backgroundColor: '#1a2332',
+      borderColor: '#1e2a3a',
+      borderWidth: 1,
+      textStyle: { color: '#e8edf5', fontSize: 12, fontFamily: 'Noto Sans KR' },
+      formatter: function(params) {
+        const [si, di, val] = params.data;
+        return `<div style="font-weight:700;color:${deptColors[di]};margin-bottom:4px">${departments[di]}</div>` +
+          `${systems[si]}<br/>` +
+          `<span style="font-family:JetBrains Mono;font-weight:600;color:#3b82f6;font-size:14px">${formatNum(val)}</span>`;
+      }
+    },
+    grid: {
+      top: 30,
+      left: 80,
+      right: 100,
+      bottom: 40
+    },
+    xAxis: {
+      type: 'category',
+      data: systems,
+      position: 'top',
+      axisLabel: { color: '#7a8ba8', fontSize: 12, fontWeight: 500 },
+      axisLine: { show: false },
+      axisTick: { show: false },
+      splitArea: { show: false }
+    },
+    yAxis: {
+      type: 'category',
+      data: departments,
+      inverse: false,
+      axisLabel: {
+        color: function(value, index) { return deptColors[index]; },
+        fontSize: 13,
+        fontWeight: 600
+      },
+      axisLine: { show: false },
+      axisTick: { show: false },
+      splitArea: { show: false }
+    },
+    visualMap: {
+      min: Math.log10(minVal),
+      max: Math.log10(maxVal),
+      calculable: true,
+      orient: 'vertical',
+      right: 10,
+      top: 'center',
+      itemHeight: 200,
+      itemWidth: 14,
+      text: [formatNum(maxVal), formatNum(minVal)],
+      textStyle: { color: '#4a5a72', fontSize: 10, fontFamily: 'JetBrains Mono' },
+      inRange: {
+        color: ['#0e2a55', '#1a4a7a', '#2e6daa', '#5a9fd4', '#e85050', '#ff3355']
+      },
+      formatter: function(val) {
+        return formatNum(Math.round(Math.pow(10, val)));
+      }
+    },
+    series: [{
+      type: 'heatmap',
+      data: heatData.map(d => [d[0], d[1], Math.log10(d[2])]),
+      label: {
+        show: true,
+        color: '#fff',
+        fontSize: 13,
+        fontWeight: 600,
+        fontFamily: 'JetBrains Mono',
+        formatter: function(params) {
+          const val = Math.pow(10, params.data[2]);
+          return val >= 1000 ? Math.round(val / 1000) + 'K' : Math.round(val);
+        }
+      },
+      itemStyle: {
+        borderColor: '#0a0e1a',
+        borderWidth: 3,
+        borderRadius: 6
+      },
+      emphasis: {
+        itemStyle: {
+          borderColor: '#fff',
+          borderWidth: 2,
+          shadowBlur: 10,
+          shadowColor: 'rgba(0,0,0,0.4)'
+        }
+      }
+    }],
+    animationDuration: 800,
+    animationEasing: 'cubicOut'
+  };
+
+  chart.setOption(option);
+}
+
+// ══════════════════════════════════════
+// INIT & RESIZE
+// ══════════════════════════════════════
+initLogChart();
+initPercentChart();
+initHeatmap();
+
+window.addEventListener('resize', () => {
+  Object.values(charts).forEach(c => c.resize());
+});
+</script>
+</body>
+</html>
