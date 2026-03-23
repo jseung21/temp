@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>신규 ETL 아키텍처 제안서</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/pretendard/1.3.9/variable/pretendardvariable.min.css" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --border: #1e2d4a;
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --accent3: #8b5cf6;
+    --green: #10b981;
+    --orange: #f59e0b;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Pretendard Variable', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  .hero {
+    position: relative;
+    padding: 80px 40px 60px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 40%, rgba(59,130,246,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(6,182,212,0.06) 0%, transparent 50%);
+    animation: drift 20s ease-in-out infinite;
+  }
+
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-3%, 2%); }
+  }
+
+  .hero-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border: 1px solid var(--accent);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    position: relative;
+    background: rgba(59,130,246,0.08);
+  }
+
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    line-height: 1.2;
+    position: relative;
+    background: linear-gradient(135deg, #e2e8f0 0%, #3b82f6 50%, #06b6d4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+
+  .hero p {
+    font-size: 18px;
+    color: var(--text2);
+    position: relative;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* Navigation Tabs */
+  .tab-nav {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--surface);
+    border-radius: 12px;
+    margin-bottom: 48px;
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    position: sticky;
+    top: 12px;
+    z-index: 100;
+    backdrop-filter: blur(20px);
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 12px 20px;
+    background: transparent;
+    border: none;
+    color: var(--text3);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+
+  .tab-btn:hover { color: var(--text); }
+
+  .tab-btn.active {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+  }
+
+  .tab-panel { display: none; animation: fadeIn 0.4s ease; }
+  .tab-panel.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Section headers */
+  .section-header {
+    margin-bottom: 32px;
+  }
+
+  .section-header h2 {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .section-header p {
+    color: var(--text2);
+    font-size: 15px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+  }
+
+  .card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card p, .card li {
+    color: var(--text2);
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .card li::before {
+    content: '→';
+    color: var(--accent2);
+    margin-right: 8px;
+    font-weight: bold;
+  }
+
+  /* Architecture Diagram */
+  .arch-diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 24px;
+    margin-bottom: 32px;
+    overflow-x: auto;
+  }
+
+  .arch-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    min-width: 900px;
+    justify-content: center;
+  }
+
+  .arch-layer {
+    flex: 1;
+    max-width: 180px;
+    min-width: 140px;
+  }
+
+  .layer-label {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding: 6px 0;
+    border-radius: 6px;
+  }
+
+  .layer-box {
+    border-radius: 12px;
+    padding: 16px 12px;
+    text-align: center;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .layer-box .tool-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .layer-box .tool-desc {
+    font-size: 11px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+
+  .layer-box .tool-item {
+    background: rgba(255,255,255,0.06);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    margin: 2px 0;
+  }
+
+  .arrow-col {
+    display: flex;
+    align-items: center;
+    color: var(--text3);
+    font-size: 20px;
+    min-width: 24px;
+    justify-content: center;
+  }
+
+  /* Color themes for layers */
+  .layer-extract .layer-label { color: var(--orange); background: rgba(245,158,11,0.1); }
+  .layer-extract .layer-box { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); }
+
+  .layer-ingest .layer-label { color: var(--accent2); background: rgba(6,182,212,0.1); }
+  .layer-ingest .layer-box { background: rgba(6,182,212,0.06); border: 1px solid rgba(6,182,212,0.2); }
+
+  .layer-transform .layer-label { color: var(--accent); background: rgba(59,130,246,0.1); }
+  .layer-transform .layer-box { background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.2); }
+
+  .layer-orchestrate .layer-label { color: var(--accent3); background: rgba(139,92,246,0.1); }
+  .layer-orchestrate .layer-box { background: rgba(139,92,246,0.06); border: 1px solid rgba(139,92,246,0.2); }
+
+  .layer-store .layer-label { color: var(--green); background: rgba(16,185,129,0.1); }
+  .layer-store .layer-box { background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2); }
+
+  .layer-quality .layer-label { color: var(--red); background: rgba(239,68,68,0.1); }
+  .layer-quality .layer-box { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); }
+
+  /* Comparison Table */
+  .comp-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+    font-size: 13px;
+  }
+
+  .comp-table th {
+    background: var(--surface2);
+    padding: 14px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comp-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    vertical-align: top;
+  }
+
+  .comp-table tr:last-child td { border-bottom: none; }
+
+  .comp-table tr:hover td { background: rgba(59,130,246,0.04); }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .badge-best { background: rgba(16,185,129,0.15); color: var(--green); }
+  .badge-good { background: rgba(59,130,246,0.15); color: var(--accent); }
+  .badge-mid { background: rgba(245,158,11,0.15); color: var(--orange); }
+
+  /* Grid layout */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  /* Recommendation highlight */
+  .recommend {
+    position: relative;
+    border-color: var(--accent) !important;
+    overflow: hidden;
+  }
+
+  .recommend::after {
+    content: '★ 추천';
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 8px;
+  }
+
+  /* Phase timeline */
+  .phase-timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+
+  .phase-timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent3), var(--green));
+  }
+
+  .phase-item {
+    position: relative;
+    margin-bottom: 28px;
+  }
+
+  .phase-item::before {
+    content: '';
+    position: absolute;
+    left: -26px;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid var(--bg);
+  }
+
+  .phase-item:nth-child(2)::before { background: var(--accent2); }
+  .phase-item:nth-child(3)::before { background: var(--accent3); }
+  .phase-item:nth-child(4)::before { background: var(--green); }
+
+  .phase-item h4 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .phase-item .phase-period {
+    font-size: 12px;
+    color: var(--accent2);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .phase-item p {
+    color: var(--text2);
+    font-size: 14px;
+  }
+
+  /* Stat cards */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .stat-card .stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .stat-card .stat-label {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 4px;
+  }
+
+  .callout {
+    background: rgba(59,130,246,0.08);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    border-radius: 0 12px 12px 0;
+    margin: 20px 0;
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.8;
+  }
+
+  .callout strong { color: var(--text); }
+
+  .footer {
+    text-align: center;
+    padding: 48px 0;
+    color: var(--text3);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 48px;
+  }
+
+  @media (max-width: 768px) {
+    .container { padding: 0 20px; }
+    .hero { padding: 60px 20px 40px; }
+    .tab-nav { flex-wrap: nowrap; overflow-x: auto; }
+    .tab-btn { font-size: 12px; padding: 10px 14px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">Data Platform Team — Architecture Proposal</div>
+  <h1>신규 ETL 아키텍처<br>구축 제안서</h1>
+  <p>기존 시스템의 안정성·성능 이슈를 해결하고, 확장 가능한 Modern Data Stack 기반의 차세대 ETL 파이프라인을 제안합니다</p>
+</div>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-value">43%</div>
+      <div class="stat-label">평균 TCO 절감률</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">&lt;100ms</div>
+      <div class="stat-label">변환 처리 Latency</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">99.95%</div>
+      <div class="stat-label">이벤트 처리 신뢰도</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">58%</div>
+      <div class="stat-label">운영 복잡도 감소</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-nav" id="tabNav">
+    <button class="tab-btn active" data-tab="overview">현황 분석</button>
+    <button class="tab-btn" data-tab="architecture">추천 아키텍처</button>
+    <button class="tab-btn" data-tab="tools">도구 비교</button>
+    <button class="tab-btn" data-tab="cases">구축 사례</button>
+    <button class="tab-btn" data-tab="roadmap">구축 로드맵</button>
+  </div>
+
+  <!-- Tab 1: Overview -->
+  <div class="tab-panel active" id="overview">
+    <div class="section-header">
+      <h2>현황 분석 및 문제 정의</h2>
+      <p>기존 ETL 시스템의 한계와 Modern Data Stack으로의 전환 필요성</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>🔴 기존 시스템 공통 문제점</h3>
+        <ul>
+          <li>모놀리식 아키텍처로 인한 확장성 한계 — Extract/Transform/Load가 단일 프로세스에 결합</li>
+          <li>장애 발생 시 전체 파이프라인 중단 (Single Point of Failure)</li>
+          <li>배치 처리 위주로 실시간/준실시간 데이터 요구 대응 불가</li>
+          <li>데이터 품질 검증이 후행적(reactive)이고 자동화 미흡</li>
+          <li>파이프라인 변경 시 영향도 분석 및 배포 리스크 높음</li>
+          <li>데이터 리니지(Lineage) 추적 어려움으로 거버넌스 약화</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>🟢 Modern ETL이 추구하는 방향</h3>
+        <ul>
+          <li><strong>Microservices 기반</strong>: E, T, L 각 단계를 독립 배포·스케일링 가능하도록 분리</li>
+          <li><strong>Batch + Streaming 하이브리드</strong>: 배치와 실시간 처리를 단일 아키텍처에서 지원</li>
+          <li><strong>ELT 패러다임 전환</strong>: Raw 데이터를 먼저 적재하고, DW/Lakehouse의 연산 파워로 변환</li>
+          <li><strong>Data Quality as Code</strong>: 자동화된 품질 검증 게이트를 파이프라인에 내장</li>
+          <li><strong>Asset-First Orchestration</strong>: 태스크가 아닌 데이터 자산 중심의 파이프라인 관리</li>
+          <li><strong>Data as a Product</strong>: 데이터를 발견 가능하고, SLA가 보장되는 프로덕트로 제공</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>반도체 데이터 특성 고려:</strong> 반도체 제조 데이터는 Variety(센서·설비·공정·계측 등 이종 데이터), Velocity(고빈도 시계열 센서 데이터), Volume(일 수 TB~PB 규모), Veracity(데이터 품질이 Yield 분석의 핵심)라는 4V 특성이 극대화됩니다. Databricks 등 Lakehouse 아키텍처가 반도체 데이터의 이러한 특성에 적합하며, Intel, AMD, NVIDIA, ASML 등이 이미 도입하고 있습니다.
+    </div>
+
+    <div class="card">
+      <h3>📊 ETL vs ELT — 패러다임 비교</h3>
+      <table class="comp-table">
+        <tr>
+          <th>구분</th>
+          <th>전통 ETL</th>
+          <th>Modern ELT</th>
+          <th>Hybrid (추천)</th>
+        </tr>
+        <tr>
+          <td><strong>변환 위치</strong></td>
+          <td>중간 서버에서 변환 후 적재</td>
+          <td>DW에 Raw 적재 후 변환</td>
+          <td>민감 데이터는 ETL, 나머지 ELT</td>
+        </tr>
+        <tr>
+          <td><strong>확장성</strong></td>
+          <td>변환 서버 스케일에 종속</td>
+          <td>DW의 컴퓨팅 파워 활용</td>
+          <td>워크로드별 최적 방식 적용</td>
+        </tr>
+        <tr>
+          <td><strong>데이터 접근</strong></td>
+          <td>변환 완료 후에만 조회 가능</td>
+          <td>Raw 데이터 즉시 접근 가능</td>
+          <td>단계별 접근 수준 분리</td>
+        </tr>
+        <tr>
+          <td><strong>적합 시나리오</strong></td>
+          <td>규제 데이터, 정형 리포트</td>
+          <td>탐색적 분석, ML 워크로드</td>
+          <td>엔터프라이즈 데이터 플랫폼</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 2: Architecture -->
+  <div class="tab-panel" id="architecture">
+    <div class="section-header">
+      <h2>추천 아키텍처: Modular Data Stack</h2>
+      <p>각 레이어를 Best-of-Breed 도구로 구성하는 모듈형 아키텍처</p>
+    </div>
+
+    <div class="arch-diagram">
+      <div class="arch-flow">
+        <div class="arch-layer layer-extract">
+          <div class="layer-label">① EXTRACT</div>
+          <div class="layer-box">
+            <div class="tool-name">Data Sources</div>
+            <div class="tool-item">MES / ERP / LIMS</div>
+            <div class="tool-item">설비 센서 데이터</div>
+            <div class="tool-item">API / File / DB</div>
+            <div class="tool-desc">CDC + Batch + Streaming</div>
+          </div>
+        </div>
+
+        <div class="arrow-col">▶</div>
+
+        <div class="arch-layer layer-ingest">
+          <div class="layer-label">② INGEST</div>
+          <div class="layer-box">
+            <div class="tool-name">Airbyte / Kafka</div>
+            <div class="tool-item">Airbyte: SaaS·DB 커넥터</div>
+            <div class="tool-item">Kafka: 실시간 스트리밍</div>
+            <div class="tool-item">Debezium: CDC</div>
+            <div class="tool-desc">통합 수집 레이어</div>
+          </div>
+        </div>
+
+        <div class="arrow-col">▶</div>
+
+        <div class="arch-layer layer-store">
+          <div class="layer-label">③ STORE</div>
+          <div class="layer-box">
+            <div class="tool-name">Lakehouse</div>
+            <div class="tool-item">Delta Lake / Iceberg</div>
+            <div class="tool-item">Bronze → Silver → Gold</div>
+            <div class="tool-item">Object Storage 기반</div>
+            <div class="tool-desc">Medallion Architecture</div>
+          </div>
+        </div>
+
+        <div class="arrow-col">▶</div>
+
+        <div class="arch-layer layer-transform">
+          <div class="layer-label">④ TRANSFORM</div>
+          <div class="layer-box">
+            <div class="tool-name">dbt + Spark</div>
+            <div class="tool-item">dbt: SQL 모델링</div>
+            <div class="tool-item">Spark: 대용량 처리</div>
+            <div class="tool-item">테스트 & 문서 자동화</div>
+            <div class="tool-desc">Modular SQL Transform</div>
+          </div>
+        </div>
+
+        <div class="arrow-col">▶</div>
+
+        <div class="arch-layer layer-orchestrate">
+          <div class="layer-label">⑤ ORCHESTRATE</div>
+          <div class="layer-box">
+            <div class="tool-name">Dagster / Airflow</div>
+            <div class="tool-item">Asset 기반 오케스트레이션</div>
+            <div class="tool-item">DAG 버전 관리</div>
+            <div class="tool-item">모니터링 & 알림</div>
+            <div class="tool-desc">파이프라인 관제</div>
+          </div>
+        </div>
+
+        <div class="arrow-col">▶</div>
+
+        <div class="arch-layer layer-quality">
+          <div class="layer-label">⑥ QUALITY</div>
+          <div class="layer-box">
+            <div class="tool-name">Observability</div>
+            <div class="tool-item">Great Expectations</div>
+            <div class="tool-item">Data Lineage 추적</div>
+            <div class="tool-item">SLA 모니터링</div>
+            <div class="tool-desc">Data Quality Gate</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>핵심 설계 원칙:</strong> 각 레이어는 독립적으로 교체·확장 가능하며, 벤더 종속성을 최소화합니다. Lakehouse를 중심으로 배치+스트리밍을 통합하고, dbt로 변환 로직을 코드화하여 버전 관리·테스트·문서화를 표준화합니다.
+    </div>
+
+    <div class="grid-2">
+      <div class="card recommend">
+        <h3>🏗️ Option A: Lakehouse 중심 구성</h3>
+        <p style="margin-bottom: 12px; color: var(--green); font-weight: 600;">반도체 데이터에 가장 적합한 구성</p>
+        <ul>
+          <li><strong>수집</strong>: Airbyte(DB/SaaS) + Kafka(설비 센서) + Debezium(CDC)</li>
+          <li><strong>저장</strong>: Databricks / Delta Lake (Medallion Architecture)</li>
+          <li><strong>변환</strong>: dbt Core + Apache Spark (대용량 시계열 처리)</li>
+          <li><strong>오케스트레이션</strong>: Dagster (Asset-first, 데이터 리니지)</li>
+          <li><strong>품질</strong>: Great Expectations + dbt tests</li>
+          <li><strong>장점</strong>: 대용량 센서 데이터 처리에 최적, ET/OT/IT 데이터 통합, ML 워크로드 지원</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>🏗️ Option B: Cloud DW 중심 구성</h3>
+        <p style="margin-bottom: 12px; color: var(--accent2); font-weight: 600;">SaaS 데이터 중심, 빠른 구축 시</p>
+        <ul>
+          <li><strong>수집</strong>: Fivetran(Managed ELT) + Kafka(이벤트)</li>
+          <li><strong>저장</strong>: Snowflake / BigQuery</li>
+          <li><strong>변환</strong>: dbt Cloud (Managed)</li>
+          <li><strong>오케스트레이션</strong>: Airflow 3.0 (DAG Versioning, Event-driven)</li>
+          <li><strong>품질</strong>: dbt tests + Snowflake Data Quality</li>
+          <li><strong>장점</strong>: 운영 부담 최소화, 빠른 PoC, SaaS 데이터 통합에 강점</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🔄 Medallion Architecture (Bronze → Silver → Gold)</h3>
+      <p style="margin-bottom: 16px;">Lakehouse 패턴의 핵심 — 데이터를 3개 계층으로 점진적으로 정제합니다.</p>
+      <table class="comp-table">
+        <tr>
+          <th>계층</th>
+          <th>역할</th>
+          <th>데이터 특성</th>
+          <th>반도체 적용 예시</th>
+        </tr>
+        <tr>
+          <td style="color:var(--orange);font-weight:700;">Bronze</td>
+          <td>Raw 데이터 그대로 적재</td>
+          <td>비정제, 원본 보존, 감사 추적용</td>
+          <td>설비 센서 Raw Log, MES 이벤트</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent);font-weight:700;">Silver</td>
+          <td>정제·표준화·조인</td>
+          <td>클렌징, 중복 제거, 스키마 정규화</td>
+          <td>공정별 통합 데이터, 계측 표준화</td>
+        </tr>
+        <tr>
+          <td style="color:var(--green);font-weight:700;">Gold</td>
+          <td>비즈니스 모델·집계</td>
+          <td>분석/리포팅 최적화, Pre-aggregated</td>
+          <td>Yield 분석 마트, 설비 건강도 대시보드</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 3: Tools -->
+  <div class="tab-panel" id="tools">
+    <div class="section-header">
+      <h2>주요 도구 비교 분석</h2>
+      <p>각 레이어별 Best-of-Breed 도구 상세 비교</p>
+    </div>
+
+    <h3 style="font-size:20px; margin-bottom:20px;">🔌 데이터 수집 (Ingestion)</h3>
+    <div class="card">
+      <table class="comp-table">
+        <tr>
+          <th>항목</th>
+          <th>Airbyte</th>
+          <th>Fivetran</th>
+          <th>Kafka + Debezium</th>
+        </tr>
+        <tr>
+          <td><strong>유형</strong></td>
+          <td>오픈소스 ELT</td>
+          <td>Managed SaaS ELT</td>
+          <td>오픈소스 스트리밍</td>
+        </tr>
+        <tr>
+          <td><strong>커넥터</strong></td>
+          <td>600+ (커스텀 빌더 제공)</td>
+          <td>700+ (엔터프라이즈 검증)</td>
+          <td>Debezium CDC + 커스텀</td>
+        </tr>
+        <tr>
+          <td><strong>배포 방식</strong></td>
+          <td>Self-hosted / Cloud 선택</td>
+          <td>SaaS 전용</td>
+          <td>Self-hosted (K8s)</td>
+        </tr>
+        <tr>
+          <td><strong>커스터마이징</strong></td>
+          <td><span class="badge badge-best">매우 높음</span></td>
+          <td><span class="badge badge-mid">제한적</span></td>
+          <td><span class="badge badge-best">매우 높음</span></td>
+        </tr>
+        <tr>
+          <td><strong>비용 모델</strong></td>
+          <td>크레딧 기반 / 오픈소스 무료</td>
+          <td>MAR 기반 (변동폭 큼)</td>
+          <td>인프라 비용만</td>
+        </tr>
+        <tr>
+          <td><strong>적합 시나리오</strong></td>
+          <td>유연성·비용 우선, 내부 API 다수</td>
+          <td>안정성·SLA 우선, 빠른 구축</td>
+          <td>실시간 설비 데이터 스트리밍</td>
+        </tr>
+        <tr>
+          <td><strong>추천도</strong></td>
+          <td><span class="badge badge-best">★ DB/SaaS 수집</span></td>
+          <td><span class="badge badge-good">○ 대안</span></td>
+          <td><span class="badge badge-best">★ 실시간 수집</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <h3 style="font-size:20px; margin: 32px 0 20px;">⚙️ 오케스트레이션 (Orchestration)</h3>
+    <div class="card">
+      <table class="comp-table">
+        <tr>
+          <th>항목</th>
+          <th>Dagster</th>
+          <th>Apache Airflow 3.0</th>
+          <th>Prefect</th>
+        </tr>
+        <tr>
+          <td><strong>설계 철학</strong></td>
+          <td>Asset-first (데이터 자산 중심)</td>
+          <td>Task-first (DAG 중심)</td>
+          <td>Python-native (코드 우선)</td>
+        </tr>
+        <tr>
+          <td><strong>개발 경험</strong></td>
+          <td><span class="badge badge-best">우수</span> 로컬 테스트, 타입 시스템</td>
+          <td><span class="badge badge-mid">보통</span> 보일러플레이트 多</td>
+          <td><span class="badge badge-best">우수</span> 표준 Python 그대로</td>
+        </tr>
+        <tr>
+          <td><strong>데이터 리니지</strong></td>
+          <td><span class="badge badge-best">내장 (Asset Graph)</span></td>
+          <td><span class="badge badge-mid">외부 도구 필요</span></td>
+          <td><span class="badge badge-mid">제한적</span></td>
+        </tr>
+        <tr>
+          <td><strong>dbt 통합</strong></td>
+          <td>네이티브 (Asset 자동 매핑)</td>
+          <td>Operator 기반</td>
+          <td>Flow 기반</td>
+        </tr>
+        <tr>
+          <td><strong>커뮤니티</strong></td>
+          <td>빠르게 성장 중</td>
+          <td><span class="badge badge-best">최대 (80K+ 조직)</span></td>
+          <td>안정적 성장</td>
+        </tr>
+        <tr>
+          <td><strong>운영 부담</strong></td>
+          <td>중간 (다소 opinionated)</td>
+          <td>높음 (인프라 관리 필요)</td>
+          <td>낮음 (하이브리드 실행)</td>
+        </tr>
+        <tr>
+          <td><strong>2025 업데이트</strong></td>
+          <td>Components GA, Catalog 강화</td>
+          <td>3.0: DAG 버전관리, 이벤트 드리븐</td>
+          <td>Incidents, 메트릭 트리거</td>
+        </tr>
+        <tr>
+          <td><strong>추천도</strong></td>
+          <td><span class="badge badge-best">★ Data Platform 최적</span></td>
+          <td><span class="badge badge-good">○ 기존 경험 팀</span></td>
+          <td><span class="badge badge-good">○ 소규모 팀</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="callout">
+      <strong>오케스트레이션 선택 가이드:</strong> Data as a Product 개념을 추진 중이라면 <strong>Dagster</strong>가 가장 적합합니다. Asset-first 접근법이 데이터 프로덕트의 소유권·SLA·리니지 추적에 자연스럽게 연결되며, dbt 모델을 Asset으로 자동 매핑하여 end-to-end 가시성을 제공합니다. 벨기에 공공기관 사례에서는 Dagster 도입 후 파이프라인 배포 속도가 2배 향상되었습니다.
+    </div>
+
+    <h3 style="font-size:20px; margin: 32px 0 20px;">🔄 변환 (Transformation)</h3>
+    <div class="grid-2">
+      <div class="card recommend">
+        <h3>dbt (Data Build Tool)</h3>
+        <ul>
+          <li>SQL SELECT문으로 변환 로직 정의 — 분석가도 기여 가능</li>
+          <li>모듈형 모델, 자동 테스트, 문서 생성</li>
+          <li>Git 기반 버전 관리 & CI/CD 연동</li>
+          <li>dbt Core (오픈소스) / dbt Cloud (매니지드) 선택</li>
+          <li>Dagster와 네이티브 통합 시 Asset 자동 매핑</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Apache Spark</h3>
+        <ul>
+          <li>대용량 분산 처리 엔진 (PB 규모)</li>
+          <li>Python/SQL/Scala 모두 지원</li>
+          <li>배치 + 스트리밍 통합 처리 (Structured Streaming)</li>
+          <li>ML 파이프라인 통합 (MLflow)</li>
+          <li>설비 센서 시계열 대용량 처리에 필수</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 4: Cases -->
+  <div class="tab-panel" id="cases">
+    <div class="section-header">
+      <h2>실제 구축 사례</h2>
+      <p>산업별 Modern ETL 전환 성공 사례와 교훈</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>🏭 제조업 — Oracle → Snowflake 마이그레이션</h3>
+        <p style="margin-bottom:12px; font-weight:600;">NTT DATA × 글로벌 제조기업</p>
+        <ul>
+          <li>기존: On-prem Oracle DW + Informatica ETL</li>
+          <li>신규: Snowflake + Matillion ELT + Qlik Replicate (AWS)</li>
+          <li>3,000 Oracle 테이블, 42 데이터소스, 4,002 ETL 매핑을 5개월 내 마이그레이션</li>
+          <li>2,350 리포트 전환 포함</li>
+          <li><strong>교훈</strong>: 단계적 마이그레이션 + 자동화된 매핑 전환이 성공 핵심</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>💰 핀테크 — 데이터 사일로 해소</h3>
+        <p style="margin-bottom:12px; font-weight:600;">CashMe (브라질 핀테크)</p>
+        <ul>
+          <li>문제: MS Dynamics, 마케팅 플랫폼 등 사일로화된 데이터</li>
+          <li>해결: ELT 파이프라인 → Snowflake 통합 → Power BI 리포팅</li>
+          <li>전사 데이터를 단일 소스로 통합하여 리포팅 시간 대폭 단축</li>
+          <li><strong>교훈</strong>: ELT 방식으로 Raw 데이터를 먼저 통합, 변환은 DW에서 수행</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>⛳ 스포츠 분석 — Dagster 도입 성과</h3>
+        <p style="margin-bottom:12px; font-weight:600;">Clippd (골프 분석 플랫폼)</p>
+        <ul>
+          <li>Dagster 도입 후 주당 8시간+ 수작업 데이터 처리 자동화</li>
+          <li>불투명했던 파이프라인을 전사 데이터 플랫폼으로 전환</li>
+          <li>200개+ 대학 골프 프로그램에 자동화된 데이터 분석 제공</li>
+          <li><strong>교훈</strong>: Asset-first 오케스트레이션이 데이터 가시성과 자동화를 동시에 해결</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>🏛️ 공공기관 — 파이프라인 속도 2배</h3>
+        <p style="margin-bottom:12px; font-weight:600;">벨기에 Fédération Wallonie-Bruxelles</p>
+        <ul>
+          <li>450만 시민 대상 서비스를 위한 데이터 플랫폼</li>
+          <li>Dagster 도입 후 사후 대응 → 선제적 데이터 개발로 전환</li>
+          <li>파이프라인 배포 속도 2배 향상</li>
+          <li><strong>교훈</strong>: Dagster의 데이터 자산 관리가 조직 차원의 변화를 견인</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>🔬 반도체 — Databricks Lakehouse</h3>
+        <p style="margin-bottom:12px; font-weight:600;">Intel, AMD, NVIDIA, ASML</p>
+        <ul>
+          <li>Databricks Intelligence Platform으로 ET/OT/IT 데이터 통합</li>
+          <li>Delta Lake 기반 배치+스트리밍 단일 아키텍처</li>
+          <li>Unity Catalog로 거버넌스, Mosaic AI로 ML 워크로드 통합</li>
+          <li>STDF 등 반도체 특화 포맷 네이티브 지원</li>
+          <li><strong>교훈</strong>: 반도체 데이터의 4V 특성에 Lakehouse가 최적</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>📊 엔터프라이즈 평균 성과 (연구 결과)</h3>
+        <p style="margin-bottom:12px; font-weight:600;">WJARR 2025 다수 기업 분석</p>
+        <ul>
+          <li>Modern ETL/ELT 전환 시 평균 TCO 43% 절감</li>
+          <li>복잡한 변환도 100ms 이하 Latency 달성</li>
+          <li>50TB → 2PB/일까지 아키텍처 변경 없이 확장</li>
+          <li>스트리밍 아키텍처 평균 85만 이벤트/초, 99.95% 신뢰도</li>
+          <li>운영 복잡도 58% 감소</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 5: Roadmap -->
+  <div class="tab-panel" id="roadmap">
+    <div class="section-header">
+      <h2>단계별 구축 로드맵</h2>
+      <p>PoC부터 전사 확대까지 4단계 접근</p>
+    </div>
+
+    <div class="phase-timeline">
+      <div class="phase-item">
+        <h4>Phase 1 — Foundation &amp; PoC</h4>
+        <div class="phase-period">1~2개월</div>
+        <p>핵심 인프라 구축과 1~2개 파이프라인 PoC 수행. Lakehouse(Delta Lake/Iceberg) 환경 세팅, Airbyte로 주요 소스 연동 PoC, dbt 프로젝트 초기 구성 및 Medallion Architecture(Bronze/Silver/Gold) 레이어 설계. Dagster 로컬 환경 구성 및 기본 Asset 정의. 기존 ETL 대비 성능·안정성 벤치마크 수행.</p>
+      </div>
+
+      <div class="phase-item">
+        <h4>Phase 2 — Core Pipeline 구축</h4>
+        <div class="phase-period">2~4개월</div>
+        <p>핵심 데이터 도메인(예: 공정 데이터, 설비 데이터) 파이프라인 본격 구축. Kafka + Debezium CDC 도입으로 실시간 스트리밍 레이어 추가. dbt 모델링 표준화 및 Data Quality 게이트(Great Expectations) 적용. Dagster Asset 그래프 구성 및 모니터링/알림 체계 확립. CI/CD 파이프라인 구성(dbt + Dagster 배포 자동화).</p>
+      </div>
+
+      <div class="phase-item">
+        <h4>Phase 3 — 확장 &amp; 마이그레이션</h4>
+        <div class="phase-period">3~6개월</div>
+        <p>기존 ETL 워크로드 단계적 마이그레이션. 추가 데이터 도메인 확장(계측, 품질, SCM 등). Data Catalog 연동 및 Data as a Product 체계 적용. 데이터 리니지 end-to-end 추적 완성. SLA 정의 및 데이터 프로덕트 계약 체계 구축.</p>
+      </div>
+
+      <div class="phase-item">
+        <h4>Phase 4 — 최적화 &amp; 자동화</h4>
+        <div class="phase-period">6개월~</div>
+        <p>성능 최적화(파티셔닝, 인크리멘탈 처리, 캐싱 전략). ML 파이프라인 통합(Feature Store, Model Training). Self-service 데이터 접근 체계 고도화. 데이터 옵저버빌리티 대시보드 운영. 기존 ETL 시스템 완전 Decommission.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>핵심 성공 요소:</strong> ① PoC 단계에서 기존 시스템 대비 명확한 성능·안정성 개선을 정량적으로 입증할 것 ② 변환 로직을 코드(dbt)로 전환하는 것이 가장 큰 문화적 변화 — 교육 투자 필요 ③ 기존 파이프라인을 한 번에 전환하지 말고, 도메인 단위로 점진적 마이그레이션 ④ Data Quality Gate를 파이프라인에 내장하여 장애를 사전에 차단
+    </div>
+
+    <div class="section-header" style="margin-top:40px;">
+      <h2>최종 추천 스택 요약</h2>
+    </div>
+
+    <div class="card recommend" style="border-color: var(--green);">
+      <h3 style="font-size:20px;">🎯 Data Platform Team 추천 구성</h3>
+      <table class="comp-table" style="margin-top:16px;">
+        <tr><th>레이어</th><th>추천 도구</th><th>선정 이유</th></tr>
+        <tr><td><strong>수집 (Batch)</strong></td><td>Airbyte (Self-hosted)</td><td>오픈소스, 커스텀 커넥터 빌더, 비용 효율적, 내부 API 대응</td></tr>
+        <tr><td><strong>수집 (Streaming)</strong></td><td>Apache Kafka + Debezium</td><td>실시간 설비 데이터 수집, CDC 지원, 고처리량</td></tr>
+        <tr><td><strong>저장</strong></td><td>Databricks / Delta Lake</td><td>반도체 4V 데이터에 최적, Batch+Streaming 통합, ML 통합</td></tr>
+        <tr><td><strong>변환</strong></td><td>dbt Core + Apache Spark</td><td>SQL 모델링 표준화 + 대용량 분산 처리, 테스트·문서 자동화</td></tr>
+        <tr><td><strong>오케스트레이션</strong></td><td>Dagster</td><td>Asset-first = Data as a Product 연계, dbt 네이티브 통합, 리니지</td></tr>
+        <tr><td><strong>품질 관리</strong></td><td>Great Expectations + dbt tests</td><td>파이프라인 내장형 품질 게이트, 자동 검증·알림</td></tr>
+        <tr><td><strong>거버넌스</strong></td><td>Unity Catalog / 자체 Data Catalog</td><td>메타데이터 관리, 접근 제어, 데이터 검색</td></tr>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="footer">
+  Data Platform Team — ETL Architecture Proposal 2026 | Based on industry research & best practices
+</div>
+
+<script>
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
