@@ -227,11 +227,22 @@
     padding: 18px 18px 20px;
     gap: 0;
     position: relative;
+    align-items: stretch;
   }
 
-  /* Section wrapper */
+  /* Section wrapper — header stays top, body fills remainder */
   .hub-section {
-    display: flex; flex-direction: column; gap: 10px;
+    display: flex; flex-direction: column; gap: 0;
+    align-self: stretch;
+  }
+
+  /* Component area: vertically centered within remaining space */
+  .hub-section-body {
+    flex: 1;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    padding-top: 10px;
   }
 
   .hub-section-header {
@@ -257,45 +268,17 @@
     color:var(--text-3); letter-spacing:1px; margin-left:auto;
   }
 
-  /* ── INTERNAL DIVIDER + FLOW ── */
+  /* ── INTERNAL DIVIDER — simple gray line ── */
   .hub-divider {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 0; position: relative; padding: 0 4px;
+    display: flex; align-items: stretch; justify-content: center;
+    padding: 0 4px;
   }
-  .div-line {
-    flex: 1; width: 2px;
-    background: linear-gradient(180deg, transparent 0%, var(--border2) 20%, var(--border2) 80%, transparent 100%);
-    border-radius: 2px; position: relative; overflow: hidden;
-  }
-  .div-line::after {
+  .hub-divider::after {
     content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 40%;
-    background: linear-gradient(180deg, rgba(26,86,219,0.4), rgba(8,145,178,0.4), transparent);
-    animation: lineFlow 2.4s ease-in-out infinite;
-    border-radius: 2px;
-  }
-  @keyframes lineFlow {
-    0%   { top: -40%; opacity: 0; }
-    20%  { opacity: 1; }
-    80%  { opacity: 1; }
-    100% { top: 100%; opacity: 0; }
-  }
-
-  .div-arrow-wrap {
-    display: flex; flex-direction: column; align-items: center; gap: 3px;
-    padding: 8px 0;
-    position: relative; z-index: 2;
-  }
-  .div-arrow {
-    font-size: 0.7rem; line-height: 1;
-    animation: arrowPop 1.6s ease-in-out infinite;
-  }
-  .div-arrow:nth-child(1) { animation-delay: 0s;    color: rgba(26,86,219,0.5); }
-  .div-arrow:nth-child(2) { animation-delay: 0.25s; color: rgba(8,145,178,0.6); }
-  .div-arrow:nth-child(3) { animation-delay: 0.5s;  color: rgba(16,185,129,0.7); }
-  @keyframes arrowPop {
-    0%,100% { opacity:0.3; transform:translateY(0); }
-    50%     { opacity:1;   transform:translateY(2px); }
+    display: block;
+    width: 1px;
+    background: #d0d5e0;
+    border-radius: 1px;
   }
 
   /* ── COMPONENT CARDS ── */
@@ -523,52 +506,46 @@
             <span class="hub-section-sub">수집 레이어</span>
           </div>
 
-          <div class="p-comp p-event">
-            <div class="p-comp-bar"></div>
-            <div class="p-comp-hd">
-              <div class="p-ico">🌊</div>
-              <span class="p-name">Event Pipeline</span>
-              <span class="p-pill">STREAM</span>
+          <div class="hub-section-body">
+            <div class="p-comp p-event">
+              <div class="p-comp-bar"></div>
+              <div class="p-comp-hd">
+                <div class="p-ico">🌊</div>
+                <span class="p-name">Event Pipeline</span>
+                <span class="p-pill">STREAM</span>
+              </div>
+              <div class="p-stats">
+                <div class="p-stat">EVT/S<strong id="evt-rps">9,840</strong></div>
+                <div class="p-stat">LAG<strong>8ms</strong></div>
+              </div>
+              <div class="event-stream">
+                <div class="e-dot"></div><div class="e-dot"></div><div class="e-dot"></div>
+                <div class="e-dot"></div><div class="e-dot"></div>
+              </div>
             </div>
-            <div class="p-stats">
-              <div class="p-stat">EVT/S<strong id="evt-rps">9,840</strong></div>
-              <div class="p-stat">LAG<strong>8ms</strong></div>
-            </div>
-            <div class="event-stream">
-              <div class="e-dot"></div><div class="e-dot"></div><div class="e-dot"></div>
-              <div class="e-dot"></div><div class="e-dot"></div>
-            </div>
-          </div>
 
-          <div class="p-comp p-cdc">
-            <div class="p-comp-bar"></div>
-            <div class="p-comp-hd">
-              <div class="p-ico">🔄</div>
-              <span class="p-name">CDC Pipeline</span>
-              <span class="p-pill">SYNC</span>
-            </div>
-            <div class="p-stats">
-              <div class="p-stat">CHG/S<strong id="cdc-rps">2,310</strong></div>
-              <div class="p-stat">MODE<strong>LOG</strong></div>
-            </div>
-            <div class="cdc-rows">
-              <div class="cdc-row ins"></div>
-              <div class="cdc-row upd"></div>
-              <div class="cdc-row del"></div>
+            <div class="p-comp p-cdc">
+              <div class="p-comp-bar"></div>
+              <div class="p-comp-hd">
+                <div class="p-ico">🔄</div>
+                <span class="p-name">CDC Pipeline</span>
+                <span class="p-pill">SYNC</span>
+              </div>
+              <div class="p-stats">
+                <div class="p-stat">CHG/S<strong id="cdc-rps">2,310</strong></div>
+                <div class="p-stat">MODE<strong>LOG</strong></div>
+              </div>
+              <div class="cdc-rows">
+                <div class="cdc-row ins"></div>
+                <div class="cdc-row upd"></div>
+                <div class="cdc-row del"></div>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- DIVIDER 1 -->
-        <div class="hub-divider">
-          <div class="div-line"></div>
-          <div class="div-arrow-wrap">
-            <div class="div-arrow">›</div>
-            <div class="div-arrow">›</div>
-            <div class="div-arrow">›</div>
-          </div>
-          <div class="div-line"></div>
-        </div>
+        <div class="hub-divider"></div>
 
         <!-- SECTION 2: Storage -->
         <div class="hub-section storage-section" id="storageSection">
@@ -579,7 +556,8 @@
           </div>
 
           <!-- Database: upright drum cylinder -->
-          <div class="p-comp p-db">
+          <div class="hub-section-body">
+            <div class="p-comp p-db">
             <div class="p-comp-bar"></div>
             <div class="p-comp-hd">
               <div class="p-ico">
@@ -678,18 +656,11 @@
               <div class="k-bar"></div>
             </div>
           </div>
+          </div><!-- /hub-section-body -->
         </div>
 
         <!-- DIVIDER 2 -->
-        <div class="hub-divider">
-          <div class="div-line"></div>
-          <div class="div-arrow-wrap">
-            <div class="div-arrow">›</div>
-            <div class="div-arrow">›</div>
-            <div class="div-arrow">›</div>
-          </div>
-          <div class="div-line"></div>
-        </div>
+        <div class="hub-divider"></div>
 
         <!-- SECTION 3: Service -->
         <div class="hub-section service-section" id="serviceSection">
@@ -699,7 +670,8 @@
             <span class="hub-section-sub">서비스 레이어</span>
           </div>
 
-          <div class="p-comp p-direct" id="svc-direct">
+          <div class="hub-section-body">
+            <div class="p-comp p-direct" id="svc-direct">
             <div class="p-comp-bar"></div>
             <div class="p-comp-hd">
               <div class="p-ico">🔗</div>
@@ -719,44 +691,45 @@
             </div>
           </div>
 
-          <div class="p-comp p-api" id="svc-api">
-            <div class="p-comp-bar"></div>
-            <div class="p-comp-hd">
-              <div class="p-ico">🚀</div>
-              <span class="p-name">h-API</span>
-              <span class="p-pill">UP</span>
+            <div class="p-comp p-api" id="svc-api">
+              <div class="p-comp-bar"></div>
+              <div class="p-comp-hd">
+                <div class="p-ico">🚀</div>
+                <span class="p-name">h-API</span>
+                <span class="p-pill">UP</span>
+              </div>
+              <div class="p-stats">
+                <div class="p-stat">REQ/S<strong id="h0-rps">3,200</strong></div>
+                <div class="p-stat">P99<strong>18ms</strong></div>
+              </div>
             </div>
-            <div class="p-stats">
-              <div class="p-stat">REQ/S<strong id="h0-rps">3,200</strong></div>
-              <div class="p-stat">P99<strong>18ms</strong></div>
-            </div>
-          </div>
 
-          <div class="p-comp p-conn" id="svc-conn">
-            <div class="p-comp-bar"></div>
-            <div class="p-comp-hd">
-              <div class="p-ico">🔌</div>
-              <span class="p-name">h-Connect</span>
-              <span class="p-pill">UP</span>
+            <div class="p-comp p-conn" id="svc-conn">
+              <div class="p-comp-bar"></div>
+              <div class="p-comp-hd">
+                <div class="p-ico">🔌</div>
+                <span class="p-name">h-Connect</span>
+                <span class="p-pill">UP</span>
+              </div>
+              <div class="p-stats">
+                <div class="p-stat">MSG/S<strong id="hc-mps">12.1K</strong></div>
+                <div class="p-stat">CONN<strong>2,408</strong></div>
+              </div>
             </div>
-            <div class="p-stats">
-              <div class="p-stat">MSG/S<strong id="hc-mps">12.1K</strong></div>
-              <div class="p-stat">CONN<strong>2,408</strong></div>
-            </div>
-          </div>
 
-          <div class="p-comp p-bridge" id="svc-bridge">
-            <div class="p-comp-bar"></div>
-            <div class="p-comp-hd">
-              <div class="p-ico">🌉</div>
-              <span class="p-name">h-Bridge</span>
-              <span class="p-pill">UP</span>
+            <div class="p-comp p-bridge" id="svc-bridge">
+              <div class="p-comp-bar"></div>
+              <div class="p-comp-hd">
+                <div class="p-ico">🌉</div>
+                <span class="p-name">h-Bridge</span>
+                <span class="p-pill">UP</span>
+              </div>
+              <div class="p-stats">
+                <div class="p-stat">EVT/S<strong id="hb-eps">1,840</strong></div>
+                <div class="p-stat">RELAY<strong>OK</strong></div>
+              </div>
             </div>
-            <div class="p-stats">
-              <div class="p-stat">EVT/S<strong id="hb-eps">1,840</strong></div>
-              <div class="p-stat">RELAY<strong>OK</strong></div>
-            </div>
-          </div>
+          </div><!-- /hub-section-body -->
         </div>
 
         <!-- Internal SVG (for flows inside hub) -->
@@ -916,11 +889,13 @@
       { s:1, t:1, color:'rgba(78,110,154,0.5)',  dur:2.0, delay:0.9  }, // CDC → MSG
     ];
     // Storage → Service
+    // Service index: 0=Direct Connection, 1=h-API, 2=h-Connect, 3=h-Bridge
     const stor2svc = [
-      { s:0, t:0, color:'rgba(58,125,107,0.45)', dur:2.1, delay:0    }, // DB → Direct
-      { s:0, t:1, color:'rgba(58,125,107,0.5)',  dur:1.9, delay:0.4  }, // DB → h-API
-      { s:1, t:2, color:'rgba(58,125,107,0.5)',  dur:2.3, delay:0.2  }, // MSG → h-Connect
-      { s:1, t:3, color:'rgba(58,125,107,0.4)',  dur:2.5, delay:0.7  }, // MSG → h-Bridge
+      { s:0, t:0, color:'rgba(58,125,107,0.45)', dur:2.1, delay:0.0  }, // DB → Direct Connection
+      { s:0, t:1, color:'rgba(58,125,107,0.50)', dur:1.9, delay:0.4  }, // DB → h-API
+      { s:1, t:0, color:'rgba(58,125,107,0.40)', dur:2.4, delay:0.2  }, // MSG Queue → Direct Connection
+      { s:1, t:2, color:'rgba(58,125,107,0.50)', dur:2.3, delay:0.6  }, // MSG Queue → h-Connect
+      { s:1, t:3, color:'rgba(58,125,107,0.40)', dur:2.6, delay:1.0  }, // MSG Queue → h-Bridge
     ];
 
     let pidx = 0;
