@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Hub Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:         #eef2f8;
+    --surface:    #ffffff;
+    --surface2:   #f4f6fb;
+    --border:     rgba(30,60,120,0.09);
+    --border2:    rgba(30,60,120,0.15);
+
+    /* ── Zone 1: Ingestion — dusty steel blue ── */
+    --ing:        #4e6e9a;
+    --ing-md:     #6b8db8;
+    --ing-lt:     #edf2f9;
+    --ing-bd:     rgba(78,110,154,0.25);
+
+    /* ── Zone 2: Storage — dusty violet ── */
+    --sto:        #6a5896;
+    --sto-md:     #8b78ba;
+    --sto-lt:     #f0edf9;
+    --sto-bd:     rgba(106,88,150,0.25);
+
+    /* ── Zone 3: Service — dusty teal ── */
+    --svc:        #3a7d6b;
+    --svc-md:     #5a9e8a;
+    --svc-lt:     #e8f5f1;
+    --svc-bd:     rgba(58,125,107,0.25);
+
+    /* Header accent (unchanged) */
+    --blue:       #1a56db;
+    --sky:        #0ea5e9;
+    --green-md:   #10b981;
+
+    /* Gray palette for source/target */
+    --gray-bg:    #f2f4f8;
+    --gray-bd:    rgba(100,120,160,0.18);
+    --gray-icon:  #e8eaf0;
+    --gray-text:  #8a96aa;
+    --gray-sub:   #b0b8c8;
+    --gray-badge: #e4e7ef;
+    --gray-val:   #a0aab8;
+
+    --text:       #0e1e3c;
+    --text-3:     #8ba0be;
+
+    --shadow-sm:  0 1px 3px rgba(20,50,120,0.06), 0 2px 10px rgba(20,50,120,0.04);
+    --shadow-md:  0 4px 18px rgba(20,50,120,0.09), 0 1px 4px rgba(20,50,120,0.05);
+    --shadow-lg:  0 8px 44px rgba(20,50,120,0.13), 0 2px 8px rgba(20,50,120,0.06);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(ellipse 50% 40% at 50% 55%, rgba(26,86,219,0.07) 0%, transparent 65%),
+      radial-gradient(ellipse 30% 25% at 15% 30%, rgba(100,120,160,0.04) 0%, transparent 55%),
+      radial-gradient(ellipse 30% 25% at 85% 70%, rgba(100,120,160,0.04) 0%, transparent 55%);
+  }
+  body::after {
+    content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(26,86,219,0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,86,219,0.018) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position:relative; z-index:20;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border2);
+    box-shadow: var(--shadow-sm);
+    padding: 0 40px; height: 64px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo { display:flex; align-items:center; gap:12px; }
+  .logo-mark {
+    width:36px; height:36px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    border-radius:10px; display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 4px 14px rgba(26,86,219,0.3); font-size:15px; color:#fff;
+  }
+  .logo-text { font-family:'Syne',sans-serif; font-weight:800; font-size:1.05rem; color:var(--text); }
+  .logo-text em { font-style:normal; color:var(--blue); }
+  .header-right { display:flex; align-items:center; gap:20px; }
+  .status-pill {
+    display:flex; align-items:center; gap:7px;
+    background:var(--green-lt); border:1px solid rgba(5,150,105,0.2);
+    border-radius:20px; padding:5px 14px;
+    font-family:'JetBrains Mono',monospace; font-size:0.64rem; color:var(--green); letter-spacing:1px;
+  }
+  .status-dot { width:7px; height:7px; border-radius:50%; background:var(--green-md); box-shadow:0 0 0 3px rgba(16,185,129,0.2); animation:pulseAnim 2s ease-in-out infinite; }
+  @keyframes pulseAnim { 0%,100%{box-shadow:0 0 0 3px rgba(16,185,129,0.2)} 50%{box-shadow:0 0 0 6px rgba(16,185,129,0.08)} }
+  .header-clock { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--text-3); }
+
+  /* ── HERO ── */
+  .page-hero { position:relative; z-index:10; text-align:center; padding:30px 20px 14px; }
+  .page-hero h1 { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(1.5rem,3vw,2.1rem); color:var(--text); }
+  .page-hero h1 em { font-style:normal; color:var(--blue); position:relative; }
+  .page-hero h1 em::after { content:''; position:absolute; bottom:1px; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--blue),var(--sky)); border-radius:2px; opacity:0.3; }
+  .page-hero p { margin-top:7px; font-size:0.78rem; color:var(--text-3); letter-spacing:2px; text-transform:uppercase; }
+
+  /* ── MAIN CANVAS ── */
+  .canvas {
+    position:relative; z-index:5;
+    max-width:1360px; margin:0 auto;
+    padding: 14px 28px 20px;
+    display:grid;
+    grid-template-columns: 190px 64px 1fr 64px 190px;
+    align-items:center;
+    min-height:520px;
+    gap:0;
+  }
+  .col-sources  { grid-column:1; display:flex; flex-direction:column; gap:12px; }
+  .col-left     { grid-column:2; height:100%; min-height:460px; }
+  .col-hub      { grid-column:3; display:flex; align-items:center; justify-content:center; }
+  .col-right    { grid-column:4; height:100%; min-height:460px; }
+  .col-targets  { grid-column:5; display:flex; flex-direction:column; gap:12px; }
+
+  /* ── GRAY SOURCE NODES ── */
+  .node {
+    background: var(--gray-bg);
+    border: 1px solid var(--gray-bd);
+    border-radius: 12px;
+    padding: 13px 15px;
+    box-shadow: 0 1px 4px rgba(100,120,160,0.08);
+    cursor: default;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .node::before {
+    content:''; position:absolute; top:0; left:0; bottom:0;
+    width:3px; border-radius:12px 0 0 12px;
+    background: linear-gradient(180deg,var(--gray-sub),var(--gray-badge));
+  }
+  .node:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(100,120,160,0.12); }
+
+  .node-header { display:flex; align-items:center; gap:9px; margin-bottom:7px; }
+  .node-ico {
+    width:32px; height:32px; border-radius:8px;
+    background: var(--gray-icon);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1rem; flex-shrink:0;
+    filter: grayscale(1) opacity(0.7);
+  }
+  .node-name { font-family:'Syne',sans-serif; font-weight:700; font-size:0.9rem; color:var(--gray-text); }
+  .node-type { font-size:0.66rem; color:var(--gray-sub); margin-top:1px; }
+  .node-badge {
+    display:inline-flex; align-items:center; gap:4px;
+    padding:2px 8px; border-radius:20px;
+    background: var(--gray-badge); color: var(--gray-text);
+    font-family:'JetBrains Mono',monospace; font-size:0.55rem; text-transform:uppercase;
+  }
+  .node-metric { margin-top:8px; padding-top:7px; border-top:1px solid rgba(100,120,160,0.1); display:flex; gap:12px; }
+  .m-item { font-family:'JetBrains Mono',monospace; font-size:0.55rem; color:var(--gray-sub); line-height:1.8; }
+  .m-item strong { display:block; font-size:0.68rem; font-weight:500; color:var(--gray-val); }
+
+  /* ── TARGET NODES (gray) ── */
+  .target-node {
+    background: var(--gray-bg);
+    border: 1px solid var(--gray-bd);
+    border-radius: 12px;
+    padding: 13px 15px;
+    box-shadow: 0 1px 4px rgba(100,120,160,0.08);
+    cursor:default;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
+    text-align: left;
+  }
+  .target-node::before {
+    content:''; position:absolute; top:0; left:0; bottom:0;
+    width:3px; border-radius:12px 0 0 12px;
+    background: linear-gradient(180deg,var(--gray-sub),var(--gray-badge));
+  }
+  .target-node:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(100,120,160,0.12); }
+  .target-node .node-ico { filter: grayscale(1) opacity(0.65); }
+
+  /* ── DATA HUB ── */
+  .hub {
+    width: 100%;
+    max-width: 720px;
+    background: var(--surface);
+    border: 1.5px solid var(--border2);
+    border-radius: 22px;
+    box-shadow: var(--shadow-lg), 0 0 0 4px rgba(26,86,219,0.04);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Hub header bar */
+  .hub-top {
+    background: linear-gradient(128deg, #1648c8 0%, #2563eb 50%, #0891b2 100%);
+    padding: 16px 24px 14px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:relative; overflow:hidden;
+  }
+  .hub-top::before { content:''; position:absolute; top:-40px; right:-20px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,0.08); }
+  .hub-top::after  { content:''; position:absolute; bottom:-25px; left:15px; width:70px; height:70px; border-radius:50%; background:rgba(255,255,255,0.06); }
+  .hub-label { font-family:'JetBrains Mono',monospace; font-size:0.55rem; letter-spacing:3px; color:rgba(255,255,255,0.55); text-transform:uppercase; margin-bottom:3px; }
+  .hub-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1.15rem; color:#fff; position:relative; }
+  .hub-live {
+    position:relative;
+    background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.28);
+    border-radius:20px; padding:4px 12px;
+    font-family:'JetBrains Mono',monospace; font-size:0.57rem; color:#fff;
+    display:flex; align-items:center; gap:5px;
+  }
+  .live-dot { width:5px; height:5px; border-radius:50%; background:#fff; animation:pulseAnim 1.5s ease-in-out infinite; }
+
+  /* Hub body — three columns with two dividers */
+  .hub-body {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr 40px 1fr;
+    padding: 18px 18px 20px;
+    gap: 0;
+    position: relative;
+  }
+
+  /* Section wrapper */
+  .hub-section {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .hub-section-header {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 4px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hub-section-icon {
+    width: 26px; height: 26px; border-radius: 7px;
+    display:flex; align-items:center; justify-content:center; font-size:0.85rem;
+  }
+  .storage-section .hub-section-icon { background: var(--sto-lt); }
+  .service-section  .hub-section-icon { background: var(--svc-lt); }
+  .ingestion-section .hub-section-icon { background: var(--ing-lt); }
+  .hub-section-title {
+    font-family:'Syne',sans-serif; font-weight:700; font-size:0.75rem; letter-spacing:0.3px;
+  }
+  .storage-section .hub-section-title { color: var(--sto); }
+  .service-section  .hub-section-title { color: var(--svc); }
+  .ingestion-section .hub-section-title { color: var(--ing); }
+  .hub-section-sub {
+    font-family:'JetBrains Mono',monospace; font-size:0.55rem;
+    color:var(--text-3); letter-spacing:1px; margin-left:auto;
+  }
+
+  /* ── INTERNAL DIVIDER + FLOW ── */
+  .hub-divider {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0; position: relative; padding: 0 4px;
+  }
+  .div-line {
+    flex: 1; width: 2px;
+    background: linear-gradient(180deg, transparent 0%, var(--border2) 20%, var(--border2) 80%, transparent 100%);
+    border-radius: 2px; position: relative; overflow: hidden;
+  }
+  .div-line::after {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 40%;
+    background: linear-gradient(180deg, rgba(26,86,219,0.4), rgba(8,145,178,0.4), transparent);
+    animation: lineFlow 2.4s ease-in-out infinite;
+    border-radius: 2px;
+  }
+  @keyframes lineFlow {
+    0%   { top: -40%; opacity: 0; }
+    20%  { opacity: 1; }
+    80%  { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+
+  .div-arrow-wrap {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 8px 0;
+    position: relative; z-index: 2;
+  }
+  .div-arrow {
+    font-size: 0.7rem; line-height: 1;
+    animation: arrowPop 1.6s ease-in-out infinite;
+  }
+  .div-arrow:nth-child(1) { animation-delay: 0s;    color: rgba(26,86,219,0.5); }
+  .div-arrow:nth-child(2) { animation-delay: 0.25s; color: rgba(8,145,178,0.6); }
+  .div-arrow:nth-child(3) { animation-delay: 0.5s;  color: rgba(16,185,129,0.7); }
+  @keyframes arrowPop {
+    0%,100% { opacity:0.3; transform:translateY(0); }
+    50%     { opacity:1;   transform:translateY(2px); }
+  }
+
+  /* ── COMPONENT CARDS ── */
+  .p-comp {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 11px 13px;
+    position: relative; overflow: hidden;
+    transition: all 0.22s;
+    cursor: default;
+  }
+  .p-comp:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+  .p-comp-bar { position:absolute; top:0; left:0; right:0; height:3px; border-radius:10px 10px 0 0; }
+  /* ── COMPONENT top-bars by zone ── */
+  /* Ingestion zone */
+  .p-event  .p-comp-bar { background: linear-gradient(90deg, var(--ing), var(--ing-md)); }
+  .p-cdc    .p-comp-bar { background: linear-gradient(90deg, var(--ing), var(--ing-md)); }
+  /* Storage zone */
+  .p-db     .p-comp-bar { background: linear-gradient(90deg, var(--sto), var(--sto-md)); }
+  .p-kafka  .p-comp-bar { background: linear-gradient(90deg, var(--sto), var(--sto-md)); }
+  /* Service zone */
+  .p-direct .p-comp-bar { background: linear-gradient(90deg, var(--svc), var(--svc-md)); }
+  .p-api    .p-comp-bar { background: linear-gradient(90deg, var(--svc), var(--svc-md)); }
+  .p-conn   .p-comp-bar { background: linear-gradient(90deg, var(--svc), var(--svc-md)); }
+  .p-bridge .p-comp-bar { background: linear-gradient(90deg, var(--svc), var(--svc-md)); }
+
+  /* (zone colors consolidated above) */
+
+  .p-comp-hd { display:flex; align-items:center; gap:7px; margin-bottom:8px; }
+  .p-ico { width:26px; height:26px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.82rem; flex-shrink:0; }
+  /* zone ico backgrounds */
+  .ingestion-section .p-ico { background: var(--ing-lt); }
+  .storage-section   .p-ico { background: var(--sto-lt); }
+  .service-section   .p-ico { background: var(--svc-lt); }
+
+  .p-name { font-family:'Syne',sans-serif; font-weight:700; font-size:0.7rem; }
+  .ingestion-section .p-name { color: var(--ing); }
+  .storage-section   .p-name { color: var(--sto); }
+  .service-section   .p-name { color: var(--svc); }
+
+  .p-pill {
+    margin-left:auto; padding:1px 7px; border-radius:20px;
+    font-family:'JetBrains Mono',monospace; font-size:0.5rem;
+    animation: fadeAnim 2s ease-in-out infinite;
+  }
+  .ingestion-section .p-pill { background: var(--ing-lt); color: var(--ing); }
+  .storage-section   .p-pill { background: var(--sto-lt); color: var(--sto); }
+  .service-section   .p-pill { background: var(--svc-lt); color: var(--svc); }
+  @keyframes fadeAnim { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .p-stats { display:flex; gap:10px; flex-wrap:wrap; }
+  .p-stat { font-family:'JetBrains Mono',monospace; font-size:0.54rem; color:var(--text-3); }
+  .p-stat strong { display:block; font-size:0.67rem; font-weight:500; margin-top:1px; }
+  .ingestion-section .p-stat strong { color: var(--ing-md); }
+  .storage-section   .p-stat strong { color: var(--sto-md); }
+  .service-section   .p-stat strong { color: var(--svc-md); }
+
+  /* ── CYLINDER shapes for Storage ── */
+  .cyl-wrap { display:flex; justify-content:center; margin: 6px 0 2px; }
+  .cyl-wrap svg { overflow: visible; }
+
+  /* MSG Queue partition lines inside horizontal cylinder */
+  .mq-part { stroke: rgba(106,88,150,0.2); stroke-width:1; fill:none; stroke-dasharray:2 2; }
+
+  /* Kafka mini-bars → Storage MSG Queue bars with zone color */
+  .kafka-bars { display:flex; align-items:flex-end; gap:2px; height:12px; margin-top:6px; }
+  .k-bar { flex:1; border-radius:1px 1px 0 0; background:linear-gradient(180deg, var(--sto-md), var(--sto)); animation:barA 1.4s ease-in-out infinite; }
+  .k-bar:nth-child(1){height:40%;animation-delay:0s}  .k-bar:nth-child(2){height:72%;animation-delay:.15s}
+  .k-bar:nth-child(3){height:52%;animation-delay:.3s} .k-bar:nth-child(4){height:88%;animation-delay:.45s}
+  .k-bar:nth-child(5){height:38%;animation-delay:.6s} .k-bar:nth-child(6){height:65%;animation-delay:.75s}
+  .k-bar:nth-child(7){height:58%;animation-delay:.9s}
+  @keyframes barA { 0%,100%{opacity:.4;transform:scaleY(1)} 50%{opacity:.9;transform:scaleY(1.2)} }
+
+  /* Event Pipeline stream dots */
+  .event-stream { display:flex; align-items:center; gap:3px; margin-top:7px; overflow:hidden; height:12px; }
+  .e-dot { width:6px; height:6px; border-radius:50%; background:var(--ing-md); flex-shrink:0; animation:dotSlide 2s linear infinite; }
+  .e-dot:nth-child(1){animation-delay:0s}    .e-dot:nth-child(2){animation-delay:.4s}
+  .e-dot:nth-child(3){animation-delay:.8s}   .e-dot:nth-child(4){animation-delay:1.2s}
+  .e-dot:nth-child(5){animation-delay:1.6s}
+  @keyframes dotSlide { 0%{opacity:0;transform:translateX(-8px)} 20%{opacity:1} 80%{opacity:1} 100%{opacity:0;transform:translateX(8px)} }
+
+  /* CDC Pipeline diff rows */
+  .cdc-rows { display:flex; flex-direction:column; gap:2px; margin-top:7px; }
+  .cdc-row { height:5px; border-radius:2px; animation:cdcPulse 2.2s ease-in-out infinite; }
+  .cdc-row.ins { background:var(--ing-md); width:80%; animation-delay:0s; }
+  .cdc-row.upd { background:var(--ing);    width:55%; animation-delay:.4s; }
+  .cdc-row.del { background:rgba(78,110,154,0.35); width:30%; animation-delay:.8s; }
+  @keyframes cdcPulse { 0%,100%{opacity:.3} 50%{opacity:.85} }
+
+  /* Direct Connection link indicator */
+  .direct-links { display:flex; align-items:center; gap:5px; margin-top:7px; }
+  .dl-node { width:8px; height:8px; border-radius:2px; background:var(--svc-md); }
+  .dl-line { flex:1; height:1px; background:linear-gradient(90deg, var(--svc-md), transparent); position:relative; overflow:hidden; }
+  .dl-line::after { content:''; position:absolute; top:-1px; left:-20%; width:20%; height:3px; background:var(--svc); border-radius:2px; animation:linkFlow 1.8s linear infinite; }
+  @keyframes linkFlow { from{left:-20%} to{left:120%} }
+
+  /* ── CANVAS SVG OVERLAY (internal hub flow) ── */
+  .hub-canvas-wrap {
+    position: relative;
+    grid-column: 1 / -1;
+  }
+  #internalSvg {
+    position: absolute; top:0; left:0; width:100%; height:100%;
+    pointer-events: none; z-index: 10; overflow: visible;
+  }
+
+  /* ── EXTERNAL SVG FLOW ── */
+  .flow-svg { position:fixed; inset:0; z-index:3; pointer-events:none; width:100%; height:100%; }
+
+  /* ── COLUMN LABELS ── */
+  .labels-row {
+    position:relative; z-index:10;
+    max-width:1360px; margin:0 auto; padding:0 28px;
+    display:grid; grid-template-columns:190px 64px 1fr 64px 190px;
+  }
+  .col-label { font-family:'JetBrains Mono',monospace; font-size:0.56rem; letter-spacing:2px; text-transform:uppercase; color:var(--text-3); text-align:center; padding-top:9px; }
+  .col-label::before { content:''; display:block; width:24px; height:2px; border-radius:2px; margin:0 auto 7px; }
+  .src-lbl::before { background: linear-gradient(90deg,#b0b8c8,#d0d6e0); }
+  .hub-lbl::before { background: linear-gradient(90deg,var(--blue),var(--sky)); }
+  .tgt-lbl::before { background: linear-gradient(90deg,#b0b8c8,#d0d6e0); }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    position:fixed; bottom:0; left:0; right:0; z-index:30;
+    background:var(--surface); border-top:1px solid var(--border2);
+    box-shadow:0 -3px 16px rgba(20,50,120,0.06);
+    padding:0 40px; height:50px; display:flex; align-items:center;
+  }
+  .stat-seg { display:flex; align-items:center; gap:9px; padding:0 22px; border-right:1px solid var(--border2); }
+  .stat-seg:first-child { padding-left:0; }
+  .stat-icon { font-size:0.92rem; }
+  .stat-label { font-size:0.61rem; color:var(--text-3); font-weight:500; }
+  .stat-value { font-family:'JetBrains Mono',monospace; font-size:0.77rem; font-weight:500; color:var(--blue); }
+  .stat-value.green { color:var(--green); }
+  .ticker-wrap { margin-left:auto; overflow:hidden; width:280px; font-family:'JetBrains Mono',monospace; font-size:0.59rem; color:var(--text-3); }
+  .ticker-inner { display:inline-block; white-space:nowrap; animation:ticker 24s linear infinite; }
+  @keyframes ticker { from{transform:translateX(280px)} to{transform:translateX(-100%)} }
+  @keyframes dashAnim { from{stroke-dashoffset:28} to{stroke-dashoffset:0} }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-mark">⬡</div>
+    <div class="logo-text"><em>Data Hub</em> Portal</div>
+  </div>
+  <div class="header-right">
+    <div class="status-pill"><div class="status-dot"></div>ALL SYSTEMS OPERATIONAL</div>
+    <div class="header-clock" id="clock">--:--:-- KST</div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="page-hero">
+  <h1>실시간 <em>데이터 흐름</em> 현황</h1>
+  <p>Data Hub Flow Overview · Live Monitoring</p>
+</div>
+
+<!-- MAIN CANVAS -->
+<div class="canvas">
+
+  <!-- ── SOURCES (gray) ── -->
+  <div class="col-sources">
+    <div class="node">
+      <div class="node-header">
+        <div class="node-ico">🏭</div>
+        <div><div class="node-name">M16</div><div class="node-type">Manufacturing System</div></div>
+      </div>
+      <span class="node-badge">SOURCE</span>
+      <div class="node-metric">
+        <div class="m-item">REC/S<strong id="m16-rps">1,203</strong></div>
+        <div class="m-item">STATUS<strong>Active</strong></div>
+      </div>
+    </div>
+
+    <div class="node">
+      <div class="node-header">
+        <div class="node-ico">🔗</div>
+        <div><div class="node-name">IC</div><div class="node-type">Integrated Commerce</div></div>
+      </div>
+      <span class="node-badge">SOURCE</span>
+      <div class="node-metric">
+        <div class="m-item">REC/S<strong id="ic-rps">8,400</strong></div>
+        <div class="m-item">STATUS<strong>Active</strong></div>
+      </div>
+    </div>
+
+    <div class="node">
+      <div class="node-header">
+        <div class="node-ico">🌐</div>
+        <div><div class="node-name">CJ</div><div class="node-type">Enterprise System</div></div>
+      </div>
+      <span class="node-badge">SOURCE</span>
+      <div class="node-metric">
+        <div class="m-item">REC/S<strong id="cj-rps">540</strong></div>
+        <div class="m-item">STATUS<strong>Active</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-left"></div>
+
+  <!-- ── DATA HUB ── -->
+  <div class="col-hub">
+    <div class="hub" id="hubPanel">
+
+      <div class="hub-top">
+        <div>
+          <div class="hub-label">Core Integration Hub</div>
+          <div class="hub-title">Data Hub</div>
+        </div>
+        <div class="hub-live"><div class="live-dot"></div>LIVE</div>
+      </div>
+
+      <div class="hub-body" id="hubBody">
+
+        <!-- SECTION 1: Ingestion -->
+        <div class="hub-section ingestion-section" id="ingestionSection">
+          <div class="hub-section-header">
+            <div class="hub-section-icon">⚡</div>
+            <span class="hub-section-title">Ingestion</span>
+            <span class="hub-section-sub">수집 레이어</span>
+          </div>
+
+          <div class="p-comp p-event">
+            <div class="p-comp-bar"></div>
+            <div class="p-comp-hd">
+              <div class="p-ico">🌊</div>
+              <span class="p-name">Event Pipeline</span>
+              <span class="p-pill">STREAM</span>
+            </div>
+            <div class="p-stats">
+              <div class="p-stat">EVT/S<strong id="evt-rps">9,840</strong></div>
+              <div class="p-stat">LAG<strong>8ms</strong></div>
+            </div>
+            <div class="event-stream">
+              <div class="e-dot"></div><div class="e-dot"></div><div class="e-dot"></div>
+              <div class="e-dot"></div><div class="e-dot"></div>
+            </div>
+          </div>
+
+          <div class="p-comp p-cdc">
+            <div class="p-comp-bar"></div>
+            <div class="p-comp-hd">
+              <div class="p-ico">🔄</div>
+              <span class="p-name">CDC Pipeline</span>
+              <span class="p-pill">SYNC</span>
+            </div>
+            <div class="p-stats">
+              <div class="p-stat">CHG/S<strong id="cdc-rps">2,310</strong></div>
+              <div class="p-stat">MODE<strong>LOG</strong></div>
+            </div>
+            <div class="cdc-rows">
+              <div class="cdc-row ins"></div>
+              <div class="cdc-row upd"></div>
+              <div class="cdc-row del"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DIVIDER 1 -->
+        <div class="hub-divider">
+          <div class="div-line"></div>
+          <div class="div-arrow-wrap">
+            <div class="div-arrow">›</div>
+            <div class="div-arrow">›</div>
+            <div class="div-arrow">›</div>
+          </div>
+          <div class="div-line"></div>
+        </div>
+
+        <!-- SECTION 2: Storage -->
+        <div class="hub-section storage-section" id="storageSection">
+          <div class="hub-section-header">
+            <div class="hub-section-icon">🗄️</div>
+            <span class="hub-section-title">Storage</span>
+            <span class="hub-section-sub">저장 레이어</span>
+          </div>
+
+          <!-- Database: upright drum cylinder -->
+          <div class="p-comp p-db">
+            <div class="p-comp-bar"></div>
+            <div class="p-comp-hd">
+              <div class="p-ico">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <ellipse cx="8" cy="3.5" rx="6" ry="2" fill="var(--sto-lt)" stroke="var(--sto)" stroke-width="1.2"/>
+                  <rect x="2" y="3.5" width="12" height="7" fill="var(--sto-lt)"/>
+                  <ellipse cx="8" cy="10.5" rx="6" ry="2" fill="var(--sto-lt)" stroke="var(--sto)" stroke-width="1.2"/>
+                  <line x1="2" y1="3.5" x2="2" y2="10.5" stroke="var(--sto)" stroke-width="1.2"/>
+                  <line x1="14" y1="3.5" x2="14" y2="10.5" stroke="var(--sto)" stroke-width="1.2"/>
+                </svg>
+              </div>
+              <span class="p-name">Database</span>
+              <span class="p-pill">ACTIVE</span>
+            </div>
+            <!-- Upright cylinder shape -->
+            <div class="cyl-wrap">
+              <svg width="80" height="58" viewBox="0 0 80 58">
+                <defs>
+                  <linearGradient id="dbBody" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="var(--sto-lt)"/>
+                    <stop offset="40%" stop-color="#f8f6fd"/>
+                    <stop offset="100%" stop-color="var(--sto-lt)"/>
+                  </linearGradient>
+                </defs>
+                <!-- body -->
+                <rect x="6" y="10" width="68" height="38" fill="url(#dbBody)"/>
+                <line x1="6" y1="10" x2="6" y2="48" stroke="var(--sto)" stroke-width="1.2"/>
+                <line x1="74" y1="10" x2="74" y2="48" stroke="var(--sto)" stroke-width="1.2"/>
+                <!-- bottom ellipse -->
+                <ellipse cx="40" cy="48" rx="34" ry="8" fill="var(--sto-lt)" stroke="var(--sto)" stroke-width="1.2"/>
+                <!-- data layer lines -->
+                <ellipse cx="40" cy="24" rx="34" ry="8" fill="none" stroke="var(--sto-bd)" stroke-width="1" stroke-dasharray="3 2"/>
+                <ellipse cx="40" cy="36" rx="34" ry="8" fill="none" stroke="var(--sto-bd)" stroke-width="1" stroke-dasharray="3 2"/>
+                <!-- top ellipse (drawn last so it's on top) -->
+                <ellipse cx="40" cy="10" rx="34" ry="8" fill="var(--sto-lt)" stroke="var(--sto)" stroke-width="1.2"/>
+              </svg>
+            </div>
+            <div class="p-stats">
+              <div class="p-stat">TABLES<strong id="db-tables">1,284</strong></div>
+              <div class="p-stat">QPS<strong id="db-qps">3,421</strong></div>
+              <div class="p-stat">SIZE<strong>4.7 TB</strong></div>
+            </div>
+          </div>
+
+          <!-- MSG Queue: horizontal drum cylinder -->
+          <div class="p-comp p-kafka">
+            <div class="p-comp-bar"></div>
+            <div class="p-comp-hd">
+              <div class="p-ico">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <ellipse cx="3.5" cy="8" rx="2" ry="5.5" fill="var(--sto-lt)" stroke="var(--sto)" stroke-width="1.2"/>
+                  <rect x="3.5" y="2.5" width="9" height="11" fill="var(--sto-lt)"/>
+                  <ellipse cx="12.5" cy="8" rx="2" ry="5.5" fill="var(--sto-lt)" stroke="var(--sto)" stroke-width="1.2"/>
+                  <line x1="3.5" y1="2.5" x2="12.5" y2="2.5" stroke="var(--sto)" stroke-width="1.2"/>
+                  <line x1="3.5" y1="13.5" x2="12.5" y2="13.5" stroke="var(--sto)" stroke-width="1.2"/>
+                </svg>
+              </div>
+              <span class="p-name">MSG Queue</span>
+              <span class="p-pill">STREAM</span>
+            </div>
+            <!-- Horizontal cylinder shape -->
+            <div class="cyl-wrap">
+              <svg width="120" height="44" viewBox="0 0 120 44">
+                <defs>
+                  <linearGradient id="mqBody" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#f8f6fd"/>
+                    <stop offset="50%" stop-color="var(--sto-lt)"/>
+                    <stop offset="100%" stop-color="var(--sto-lt)"/>
+                  </linearGradient>
+                </defs>
+                <!-- body -->
+                <rect x="12" y="4" width="96" height="36" fill="url(#mqBody)"/>
+                <line x1="12" y1="4" x2="108" y2="4" stroke="var(--sto)" stroke-width="1.2"/>
+                <line x1="12" y1="40" x2="108" y2="40" stroke="var(--sto)" stroke-width="1.2"/>
+                <!-- right cap -->
+                <ellipse cx="108" cy="22" rx="10" ry="18" fill="var(--sto-lt)" stroke="var(--sto)" stroke-width="1.2"/>
+                <!-- partition lines (queue segments) -->
+                <ellipse cx="52" cy="22" rx="10" ry="18" fill="none" class="mq-part"/>
+                <ellipse cx="76" cy="22" rx="10" ry="18" fill="none" class="mq-part"/>
+                <!-- left cap (drawn last) -->
+                <ellipse cx="12" cy="22" rx="10" ry="18" fill="var(--sto-lt)" stroke="var(--sto)" stroke-width="1.2"/>
+                <!-- queue flow arrows inside -->
+                <text x="28" y="26" font-size="9" fill="var(--sto)" opacity="0.5" font-family="monospace">▶</text>
+                <text x="58" y="26" font-size="9" fill="var(--sto)" opacity="0.5" font-family="monospace">▶</text>
+                <text x="84" y="26" font-size="9" fill="var(--sto)" opacity="0.5" font-family="monospace">▶</text>
+              </svg>
+            </div>
+            <div class="p-stats">
+              <div class="p-stat">TOPICS<strong>87</strong></div>
+              <div class="p-stat">LAG<strong id="kafka-lag">12ms</strong></div>
+              <div class="p-stat">MSG/S<strong id="kafka-mps">28.4K</strong></div>
+            </div>
+            <div class="kafka-bars">
+              <div class="k-bar"></div><div class="k-bar"></div><div class="k-bar"></div>
+              <div class="k-bar"></div><div class="k-bar"></div><div class="k-bar"></div>
+              <div class="k-bar"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DIVIDER 2 -->
+        <div class="hub-divider">
+          <div class="div-line"></div>
+          <div class="div-arrow-wrap">
+            <div class="div-arrow">›</div>
+            <div class="div-arrow">›</div>
+            <div class="div-arrow">›</div>
+          </div>
+          <div class="div-line"></div>
+        </div>
+
+        <!-- SECTION 3: Service -->
+        <div class="hub-section service-section" id="serviceSection">
+          <div class="hub-section-header">
+            <div class="hub-section-icon">🔧</div>
+            <span class="hub-section-title">Service</span>
+            <span class="hub-section-sub">서비스 레이어</span>
+          </div>
+
+          <div class="p-comp p-direct" id="svc-direct">
+            <div class="p-comp-bar"></div>
+            <div class="p-comp-hd">
+              <div class="p-ico">🔗</div>
+              <span class="p-name">Direct Connection</span>
+              <span class="p-pill">UP</span>
+            </div>
+            <div class="p-stats">
+              <div class="p-stat">CONN<strong>148</strong></div>
+              <div class="p-stat">P99<strong>5ms</strong></div>
+            </div>
+            <div class="direct-links">
+              <div class="dl-node"></div>
+              <div class="dl-line"></div>
+              <div class="dl-node"></div>
+              <div class="dl-line"></div>
+              <div class="dl-node"></div>
+            </div>
+          </div>
+
+          <div class="p-comp p-api" id="svc-api">
+            <div class="p-comp-bar"></div>
+            <div class="p-comp-hd">
+              <div class="p-ico">🚀</div>
+              <span class="p-name">h-API</span>
+              <span class="p-pill">UP</span>
+            </div>
+            <div class="p-stats">
+              <div class="p-stat">REQ/S<strong id="h0-rps">3,200</strong></div>
+              <div class="p-stat">P99<strong>18ms</strong></div>
+            </div>
+          </div>
+
+          <div class="p-comp p-conn" id="svc-conn">
+            <div class="p-comp-bar"></div>
+            <div class="p-comp-hd">
+              <div class="p-ico">🔌</div>
+              <span class="p-name">h-Connect</span>
+              <span class="p-pill">UP</span>
+            </div>
+            <div class="p-stats">
+              <div class="p-stat">MSG/S<strong id="hc-mps">12.1K</strong></div>
+              <div class="p-stat">CONN<strong>2,408</strong></div>
+            </div>
+          </div>
+
+          <div class="p-comp p-bridge" id="svc-bridge">
+            <div class="p-comp-bar"></div>
+            <div class="p-comp-hd">
+              <div class="p-ico">🌉</div>
+              <span class="p-name">h-Bridge</span>
+              <span class="p-pill">UP</span>
+            </div>
+            <div class="p-stats">
+              <div class="p-stat">EVT/S<strong id="hb-eps">1,840</strong></div>
+              <div class="p-stat">RELAY<strong>OK</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Internal SVG (for flows inside hub) -->
+        <svg id="internalSvg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;overflow:visible;"></svg>
+
+      </div><!-- /hub-body -->
+    </div><!-- /hub -->
+  </div>
+
+  <div class="col-right"></div>
+
+  <!-- ── TARGETS (gray) ── -->
+  <div class="col-targets">
+    <div class="target-node">
+      <div class="node-header">
+        <div class="node-ico">🏢</div>
+        <div><div class="node-name">Target A</div><div class="node-type">ERP System</div></div>
+      </div>
+      <span class="node-badge">TARGET</span>
+      <div class="node-metric">
+        <div class="m-item">RECV<strong>1,840</strong></div>
+        <div class="m-item">STATUS<strong>Ready</strong></div>
+      </div>
+    </div>
+
+    <div class="target-node">
+      <div class="node-header">
+        <div class="node-ico">📊</div>
+        <div><div class="node-name">Target B</div><div class="node-type">BI / Data Warehouse</div></div>
+      </div>
+      <span class="node-badge">TARGET</span>
+      <div class="node-metric">
+        <div class="m-item">RECV<strong>12,100</strong></div>
+        <div class="m-item">STATUS<strong>Ready</strong></div>
+      </div>
+    </div>
+
+    <div class="target-node">
+      <div class="node-header">
+        <div class="node-ico">☁️</div>
+        <div><div class="node-name">Target C</div><div class="node-type">Cloud Platform</div></div>
+      </div>
+      <span class="node-badge">TARGET</span>
+      <div class="node-metric">
+        <div class="m-item">RECV<strong>3,200</strong></div>
+        <div class="m-item">STATUS<strong>Ready</strong></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /canvas -->
+
+<!-- LABELS -->
+<div class="labels-row">
+  <div class="col-label src-lbl" style="grid-column:1">원천 시스템<br>Source Systems</div>
+  <div style="grid-column:2"></div>
+  <div class="col-label hub-lbl" style="grid-column:3">데이터 허브<br>Data Hub</div>
+  <div style="grid-column:4"></div>
+  <div class="col-label tgt-lbl" style="grid-column:5">타겟 시스템<br>Target Systems</div>
+</div>
+
+<!-- EXTERNAL SVG FLOW -->
+<svg class="flow-svg" id="flowSvg"></svg>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-seg">
+    <span class="stat-icon">📊</span>
+    <div><div class="stat-label">처리량 Throughput</div><div class="stat-value" id="stat-tp">2.84 GB/s</div></div>
+  </div>
+  <div class="stat-seg">
+    <span class="stat-icon">⚡</span>
+    <div><div class="stat-label">활성 파이프라인</div><div class="stat-value">12</div></div>
+  </div>
+  <div class="stat-seg">
+    <span class="stat-icon">⏱</span>
+    <div><div class="stat-label">평균 지연 Latency</div><div class="stat-value" id="stat-lat">34ms</div></div>
+  </div>
+  <div class="stat-seg" style="border-right:none">
+    <span class="stat-icon">✅</span>
+    <div><div class="stat-label">성공률 Success</div><div class="stat-value green">99.97%</div></div>
+  </div>
+  <div class="ticker-wrap">
+    <span class="ticker-inner">
+      ▶ EventPipeline: 9,840 evt/s &nbsp;&nbsp;
+      ▶ CDC Pipeline: 2,310 chg/s &nbsp;&nbsp;
+      ▶ DB→h-API: 3,200 req/s &nbsp;&nbsp;
+      ▶ MSGQueue→h-Connect: 12,100 msg/s &nbsp;&nbsp;
+      ▶ h-Bridge relay: 1,840 evt/s &nbsp;&nbsp;
+      ▶ Direct Conn: 148 active &nbsp;&nbsp;
+    </span>
+  </div>
+</div>
+
+<script>
+  /* ── Clock ── */
+  setInterval(() => {
+    const kst = new Date(Date.now() + 9*3600000);
+    const p = n => String(n).padStart(2,'0');
+    document.getElementById('clock').textContent =
+      `${p(kst.getUTCHours())}:${p(kst.getUTCMinutes())}:${p(kst.getUTCSeconds())} KST`;
+  }, 1000);
+
+  /* ── Live counters ── */
+  function flicker(id, base, delta) {
+    setInterval(() => {
+      const el = document.getElementById(id); if(!el) return;
+      el.textContent = (base + Math.round((Math.random()*2-1)*delta)).toLocaleString();
+    }, 1400 + Math.random()*700);
+  }
+  flicker('m16-rps',1203,90); flicker('ic-rps',8400,420); flicker('cj-rps',540,45);
+  flicker('db-qps',3421,210); flicker('h0-rps',3200,190); flicker('hb-eps',1840,130);
+  flicker('evt-rps',9840,480); flicker('cdc-rps',2310,120);
+  setInterval(()=>{ const e=document.getElementById('kafka-lag'); if(e) e.textContent=(7+Math.random()*9).toFixed(0)+'ms'; },1600);
+  setInterval(()=>{ const e=document.getElementById('kafka-mps'); if(e) e.textContent=(25+Math.random()*6).toFixed(1)+'K'; },1300);
+  setInterval(()=>{ const e=document.getElementById('hc-mps');    if(e) e.textContent=(11+Math.random()*2).toFixed(1)+'K'; },1500);
+  setInterval(()=>{ const e=document.getElementById('stat-lat');  if(e) e.textContent=(28+Math.random()*14).toFixed(0)+'ms'; },2000);
+  setInterval(()=>{ const e=document.getElementById('stat-tp');   if(e) e.textContent=(2.5+Math.random()*0.7).toFixed(2)+' GB/s'; },1800);
+
+  /* ── SVG helpers ── */
+  const NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs) {
+    const e = document.createElementNS(NS, tag);
+    Object.entries(attrs).forEach(([k,v]) => e.setAttribute(k, v));
+    return e;
+  }
+  function rcenter(el) {
+    const r = el.getBoundingClientRect();
+    return { x: r.left+r.width/2, y: r.top+r.height/2, r };
+  }
+  function rlocal(el, ref) {
+    const er = el.getBoundingClientRect();
+    const rr = ref.getBoundingClientRect();
+    return { x: er.left-rr.left+er.width/2, y: er.top-rr.top+er.height/2, w:er.width, h:er.height };
+  }
+
+  /* ── INTERNAL HUB FLOW ── */
+  function drawInternal() {
+    const svg  = document.getElementById('internalSvg');
+    const body = document.getElementById('hubBody');
+    svg.innerHTML = `<defs>
+      <filter id="if1"><feGaussianBlur stdDeviation="1.2"/></filter>
+      <marker id="iarr" markerWidth="6" markerHeight="6" refX="5" refY="2.5" orient="auto">
+        <path d="M0,0 L0,5 L6,2.5 z" fill="rgba(80,100,140,0.4)"/>
+      </marker>
+    </defs>`;
+
+    const ingestions = body.querySelectorAll('.ingestion-section .p-comp');
+    const storages   = body.querySelectorAll('.storage-section .p-comp');
+    const services   = body.querySelectorAll('.service-section .p-comp');
+
+    // Ingestion → Storage
+    const ing2stor = [
+      { s:0, t:0, color:'rgba(78,110,154,0.5)',  dur:2.2, delay:0    }, // Event → DB
+      { s:0, t:1, color:'rgba(78,110,154,0.35)', dur:2.6, delay:0.6  }, // Event → MSG
+      { s:1, t:0, color:'rgba(78,110,154,0.35)', dur:2.4, delay:0.3  }, // CDC → DB
+      { s:1, t:1, color:'rgba(78,110,154,0.5)',  dur:2.0, delay:0.9  }, // CDC → MSG
+    ];
+    // Storage → Service
+    const stor2svc = [
+      { s:0, t:0, color:'rgba(58,125,107,0.45)', dur:2.1, delay:0    }, // DB → Direct
+      { s:0, t:1, color:'rgba(58,125,107,0.5)',  dur:1.9, delay:0.4  }, // DB → h-API
+      { s:1, t:2, color:'rgba(58,125,107,0.5)',  dur:2.3, delay:0.2  }, // MSG → h-Connect
+      { s:1, t:3, color:'rgba(58,125,107,0.4)',  dur:2.5, delay:0.7  }, // MSG → h-Bridge
+    ];
+
+    let pidx = 0;
+    function drawDash(srcEl, tgtEl, color, dur, delay) {
+      if (!srcEl || !tgtEl) return;
+      const sr = srcEl.getBoundingClientRect();
+      const tr = tgtEl.getBoundingClientRect();
+      const br = body.getBoundingClientRect();
+      const sx = sr.right - br.left,  sy = sr.top - br.top + sr.height/2;
+      const ex = tr.left  - br.left,  ey = tr.top - br.top + tr.height/2;
+      const cx = (sx+ex)/2;
+      const d  = `M${sx},${sy} C${cx+6},${sy} ${cx-6},${ey} ${ex},${ey}`;
+      const pid = 'ip'+pidx++;
+
+      // subtle glow
+      const gl = el('path',{d, fill:'none', stroke:color.replace(/[\d.]+\)$/,'0.15)'), 'stroke-width':'4', filter:'url(#if1)'});
+      svg.appendChild(gl);
+
+      // dashed line with flow animation
+      const ln = el('path',{id:pid, d, fill:'none', stroke:color, 'stroke-width':'1.4',
+        'stroke-dasharray':'6 5', 'marker-end':'url(#iarr)'});
+      ln.style.animation = `dashAnim ${dur}s linear ${delay}s infinite`;
+      svg.appendChild(ln);
+    }
+
+    ing2stor.forEach(p => drawDash(ingestions[p.s], storages[p.t],  p.color, p.dur, p.delay));
+    stor2svc.forEach(p => drawDash(storages[p.s],   services[p.t],  p.color, p.dur, p.delay));
+  }
+
+  /* ── EXTERNAL FLOW (source→hub, hub→target) ── */
+  function drawExternal() {
+    const svg = document.getElementById('flowSvg');
+    svg.innerHTML = `<defs>
+      <filter id="fo"><feGaussianBlur stdDeviation="1.5"/></filter>
+      <marker id="arr-o" markerWidth="6" markerHeight="6" refX="5" refY="2.5" orient="auto">
+        <path d="M0,0 L0,5 L6,2.5 z" fill="rgba(140,155,180,0.45)"/>
+      </marker>
+    </defs>`;
+
+    const sources = document.querySelectorAll('.node');
+    const targets = document.querySelectorAll('.target-node');
+    const hub     = document.getElementById('hubPanel');
+    if (!hub) return;
+    const hr  = hub.getBoundingClientRect();
+    const mid = hr.top + hr.height/2;
+    let idx   = 0;
+
+    function addFlow(sx,sy,ex,ey,dur,delay) {
+      const pid = 'xfl'+idx++;
+      const mx  = sx+(ex-sx)*0.55;
+      const d   = `M${sx},${sy} C${mx},${sy} ${mx},${ey} ${ex},${ey}`;
+      const color = 'rgba(150,165,190,0.55)';
+
+      const gl = el('path',{d,fill:'none',stroke:'rgba(150,165,190,0.18)', 'stroke-width':'4', filter:'url(#fo)'});
+      svg.appendChild(gl);
+
+      const ln = el('path',{id:pid, d, fill:'none', stroke:color, 'stroke-width':'1.3',
+        'stroke-dasharray':'7 6', 'marker-end':'url(#arr-o)'});
+      ln.style.animation = `dashAnim ${dur}s linear ${delay}s infinite`;
+      svg.appendChild(ln);
+    }
+
+    sources.forEach((src,i) => {
+      const sr = src.getBoundingClientRect();
+      addFlow(sr.right, sr.top+sr.height/2, hr.left, mid, 2.4+i*0.3, i*0.6);
+    });
+    targets.forEach((tgt,i) => {
+      const tr = tgt.getBoundingClientRect();
+      addFlow(hr.right, mid, tr.left, tr.top+tr.height/2, 2.2+i*0.35, i*0.5);
+    });
+  }
+
+  function drawAll() {
+    drawExternal();
+    drawInternal();
+  }
+
+  window.addEventListener('load', () => setTimeout(drawAll, 450));
+  window.addEventListener('resize', () => setTimeout(drawAll, 100));
+
+  /* ── Entrance animation ── */
+  document.querySelectorAll('.node, .hub, .target-node').forEach((e,i)=>{
+    e.style.opacity='0'; e.style.transform='translateY(14px)';
+    e.style.transition='opacity 0.5s ease, transform 0.5s ease';
+    setTimeout(()=>{ e.style.opacity='1'; e.style.transform=''; }, 150+i*90);
+  });
+</script>
+</body>
+</html>
