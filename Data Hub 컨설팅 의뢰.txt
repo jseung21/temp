@@ -1,0 +1,44 @@
+새로 모신 컨설턴트분께 Data Hub 팀의 비전과 과제를 명확히 전달할 수 있도록, **'컨설팅 의뢰서(RFP/업무 정의서)' 형태의 작성 안**을 준비했습니다.
+회사와 파트의 키워드들이 서로 어떻게 유기적으로 연결되어 'Autonomous FAB'이라는 종착지로 향하는지 컨설턴트가 한눈에 파악할 수 있도록 구조화했습니다.
+# [업무 의뢰서] Autonomous FAB 달성을 위한 Data Hub 포지셔닝 및 전략 수립
+## 1. 배경 및 목적 (Background & Objective)
+우리 회사는 궁극적인 지향점인 **Autonomous FAB(자율 제조 공장)** 구축을 가속화하고 있습니다. 이를 위해 전사적으로 Digital Twin과 AI Agent 도입을 추진 중이며, 그 핵심 기반은 데이터의 자산화와 활용성에 있습니다.
+이에 **Data Hub 팀**은 단순한 데이터 적재(Storage)를 넘어, AI와 디지털 트윈이 즉시 작동할 수 있는 데이터 생태계를 제공하는 핵심 엔진으로 포지셔닝하고자 합니다. 본 컨설팅을 통해 Data Hub 파트의 핵심 역량(Ontology, T2S)을 활용하여 전사 Buzzword들을 어떻게 관통하고 지원할 것인지 구체적인 지향점(To-Be)과 실행 로드맵을 도출하고자 합니다.
+## 2. 핵심 키워드 간의 연계성 (Key Keyword Mapping)
+컨설턴트께서는 아래의 키워드 관계성을 바탕으로 Data Hub의 정체성과 역할을 정의해 주셔야 합니다.
+```
+[최종 목표] Autonomous FAB (자율 제조 공장)
+   ▲
+[구현 체계] Digital Twin (가상 공장 시뮬레이션) + AI Agent (자율적 의사결정)
+   ▲
+[제공 가치] Data Product (자산화된 데이터) + AI Ready Data (AI가 즉시 학습 가능한 데이터)
+   ▲
+[기반 기술] Ontology (데이터 표준/관계 정의) + T2S (데이터-전략/시스템 간 신속 전환)
+
+```
+ * **Autonomous FAB & Digital Twin/AI Agent:** 공장 자율화의 두 축입니다. 가상 세계(Digital Twin)에서 시뮬레이션하고, AI Agent가 판단하여 현장을 제어합니다.
+ * **Data Product & AI Ready Data:** AI Agent와 Digital Twin이 움직이려면 전처리 없이 즉시 먹여줄 수 있는 데이터(**AI Ready Data**)가 필요하며, 이는 독립된 서비스 형태인 **Data Product**로 관리되어야 합니다.
+ * **Ontology & T2S (Data Hub 핵심 역량):** 복잡한 FAB 데이터를 AI가 이해할 수 있도록 구조화하는 핵심 도구가 **Ontology(온톨로지)**이며, 이를 통해 데이터에서 전략/시스템으로 빠르게 전환(Text-to-SQL 또는 Time-to-Strategy 등 파트 정의에 따름)하는 **T2S** 역량을 내재화해야 합니다.
+## 3. 컨설팅 핵심 요구사항 (Scope of Work)
+> **"Data Hub가 Autonomous FAB의 핵심 Engine이 되기 위한 To-Be 아키텍처와 포지셔닝 전략을 수립하라"**
+> 
+### ① Data Hub 포지셔닝 및 To-Be 정의
+ * Digital Twin 및 AI Agent 체계 내에서 Data Hub가 가져가야 할 독점적 지위와 역할 정의
+ * 단순 데이터 파이프라인 관리를 넘어, **Data Product 공급 주체**로서의 운영 모델 정립
+### ② AI Ready Data 및 Data Product 구체화 방안
+ * FAB 내 무수한 데이터들을 **AI Ready Data**로 규정하기 위한 품질 가이드라인 및 standard 정립
+ * 현업과 AI 엔지니어가 쉽게 소비할 수 있는 **Data Product의 형태와 Cataloging 체계** 기획
+### ③ 파트 기술(Ontology, T2S) 기반의 데이터 자산화 전략
+ * **Ontology**를 활용하여 FAB 내 복잡한 이기종 데이터(설비, 공정, 물류 등)의 관계성을 표준화하고 지식화(Knowledge Graph 등)하는 방안
+ * AI Agent의 접근성을 극대화하기 위한 **T2S** 기반의 데이터 인터페이스 및 활용 시나리오 구체화
+## 4. 최종 산출물 (Expected Deliverables)
+ 1. **Data Hub 마스터 플랜:** Autonomous FAB 기여를 위한 Data Hub To-Be 아키텍처 및 추진 로드맵
+ 2. **Data Product 정의서:** AI Ready Data 관점의 데이터 상품화 프레임워크 및 데이터 거버넌스 안
+ 3. **기술 적용 아키텍처:** Ontology 및 T2S 기술을 접목한 데이터 Hub 플랫폼 구조 (개념도 및 시나리오)
+## 5. 협업 방식 및 일정
+ * **기간:** [시작일] ~ [종료일] (약 O개월)
+ * **보고 체계:** 주간 정기 Weekly 및 주요 Milestone별 마일스톤 보고 (중간/최종)
+ * Data Hub 파트원 및 전사 AI/FAB 유관 부서 인터뷰 지원 예정
+### 💡 팁: 컨설턴트에게 전달하기 전 확인 사항
+위 내용 중 **T2S**의 경우 조직 내에서 정의한 정확한 풀네임(예: Text-to-SQL, Time-to-Signal, Tech-to-Business 등)과 의미를 킥오프 미팅 때 컨설턴트에게 구체적으로 브리핑해 주시면 컨설턴트가 훨씬 더 날카로운 전략을 뽑아낼 수 있습니다.
+혹시 위 의뢰서 내용 중에서 우리 팀의 현재 상황(예: 인력 부족, 특정 데이터 레거시 문제 등)을 고려해 더 강조하거나 수정하고 싶은 부분이 있으신가요?
