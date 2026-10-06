@@ -1,0 +1,29 @@
+1. A Text-to-SQL Strategy Based on Large Language Models and Knowledge Graphs for Real-World Databases  
+- 저자: Eduardo R. S. Nascimento, Caio Viktor S. Avila, Yenier Torres Izquierdo, Grettel M. García, Lucas Feijó L. Andrade, Matheus O. Silva, Michelle S. P. Facina, Melissa Lemos, Marco A. Casanova  
+- 출처: Data & Knowledge Engineering, Vol. 164, 102580, 2026  
+- 링크: [https://doi.org/10.1016/j.datak.2026.102580](https://doi.org/10.1016/j.datak.2026.102580)  
+- 요약: 이 논문은 실제 기업형 관계형 데이터베이스에서 사용자 표현과 물리적 스키마 사이의 어휘·의미 불일치를 해결하기 위해 지식그래프와 LLM을 결합한다. DANKE라는 키워드 검색 도구가 자연어 표현을 KG의 클래스·속성·데이터값에 연결하고, 이를 실제 테이블·컬럼 및 조인으로 매핑한 단일 뷰를 생성한다. 이후 FAISS로 동적 few-shot 예제를 선택하여 LLM이 SQL을 작성한다. 에너지 기업의 비공개 DB와 Mondial DB에서 각각 100개 질문으로 평가해 기존 방법보다 높은 실행 정확도를 보고했다. 다만 1만 개 테이블 규모와 Recall@100은 평가하지 않았다.
+
+2. Text-to-SQL for Enterprise Data Analytics  
+- 저자: Albert Chen, Manas Bundele, Gaurav Ahlawat, Patrick Stetz, Zhitao Wang, Qiang Fei, Donghoon Jung, Audrey Chu, Bharadwaj Jayaraman, Ayushi Panth, Yatin Arora, Sourav Jain, Renjith Varma, Alexey Ilin, Iuliia Melnychuk, Chelsea Chueh, Joyan Sil, Xiaofeng Wang  
+- 출처: KDD 2025 Workshop on Agentic AI for Enterprise; arXiv:2507.14372  
+- 링크: [https://arxiv.org/abs/2507.14372](https://arxiv.org/abs/2507.14372)  
+- 요약: LinkedIn의 대규모 데이터 레이크에 배포한 기업형 Text-to-SQL 챗봇을 설명한다. DB 메타데이터, 과거 SQL, 위키, 소스코드를 지식그래프로 색인하고, 조직·제품 영역별 테이블 군집을 만들어 검색 범위를 줄인다. 사용자 의도에 따라 데이터 탐색·SQL 작성·디버깅 에이전트를 선택하고, KG에서 관련 문맥을 검색·순위화한 뒤 SQL을 생성하며 문법 오류와 환각을 자동 수정한다. 주간 사용자 300명 이상을 확보했고 내부 평가에서 53%가 정답 또는 정답에 가까운 결과였다. 다만 KG가 정식 RDF/OWL 온톨로지인지는 명시되지 않고 평가셋도 비공개다.
+
+3. Graph-Link: Bridging the Semantic-Structural Gap in Text-to-SQL via Constrained Subgraph Induction  
+- 저자: Jianwei Zhong, Yuxi Yang, Quanxin Liu, Ruida Xu, Ming Chi, Yijun Mo  
+- 출처: Proceedings of the 43rd International Conference on Machine Learning, ICML 2026  
+- 링크: [https://proceedings.mlr.press/v306/zhong26s.html](https://proceedings.mlr.press/v306/zhong26s.html)  
+- 요약: 기존 schema retrieval이 질의와 텍스트상 유사한 테이블만 선택하면서, 의미적 단서는 약하지만 다단계 조인에 필수적인 브리지 테이블을 제거하는 문제를 다룬다. Graph-Link는 schema linking을 개별 요소 검색이 아니라 연결된 부분 그래프를 찾는 문제로 재정의한다. 계층형 스키마 그래프에서 의미 관련성이 높은 앵커를 찾고, Steiner-tree 기반 최적화로 앵커를 연결하는 최소 부분 그래프를 구성해 연결성과 신호 대 잡음비를 함께 최적화한다. BIRD와 Spider 2.0에서 recall·hit rate를 최대 7.0%, 복잡 질의 SQL 정확도를 13.8% 높였다. 다만 업무 온톨로지가 아닌 물리적 스키마 그래프를 사용한다.
+
+4. AutoLink: Autonomous Schema Exploration and Expansion for Scalable Schema Linking in Text-to-SQL at Scale  
+- 저자: Ziyang Wang, Yuanlei Zheng, Zhenbiao Cao, Xiaojin Zhang, Zhongyu Wei, Pei Fu, Zhenbo Luo, Wei Chen, Xiang Bai  
+- 출처: Proceedings of the AAAI Conference on Artificial Intelligence, Vol. 40(40), 2026  
+- 링크: [https://ojs.aaai.org/index.php/AAAI/article/view/40672](https://ojs.aaai.org/index.php/AAAI/article/view/40672)  
+- 요약: AutoLink는 전체 스키마를 한 번에 LLM에 넣거나 한 차례 Top-K 검색으로 끝내지 않고, LLM 에이전트가 필요한 스키마를 반복적으로 탐색·검증·확장하게 한다. 에이전트는 직접 DB 탐색 환경과 semantic schema search 환경을 도구처럼 사용하여 현재 후보에서 누락된 테이블·컬럼을 발견하고 관련 스키마를 점진적으로 보강한다. BIRD-Dev에서 strict schema-linking recall 97.4%, Spider 2.0-Lite에서 91.2%를 달성했고, 3,000개가 넘는 컬럼에서도 높은 recall과 토큰 효율을 유지했다. 현재 연구의 recall-first 목표와 가장 가깝지만 업무 온톨로지나 코드값 grounding은 포함하지 않는다.
+
+5. LinkAlign: Scalable Schema Linking for Real-World Large-Scale Multi-Database Text-to-SQL  
+- 저자: Yihan Wang, Peiyu Liu, Xin Yang  
+- 출처: Proceedings of EMNLP 2025, pp. 977–991  
+- 링크: [https://aclanthology.org/2025.emnlp-main.51/](https://aclanthology.org/2025.emnlp-main.51/)  
+- 요약: LinkAlign은 실무형 대규모 Text-to-SQL의 schema linking을 대상 데이터베이스를 찾는 database retrieval과 DB 내부의 테이블·컬럼을 찾는 schema item grounding으로 분리한다. 첫 검색 결과와 필드 설명·타입·값 예시를 LLM이 분석해 누락 가능성이 있는 스키마를 추론하고 질의를 반복적으로 재작성하여 다시 검색한다. 이후 유사하지만 무관한 DB를 filtering하고 필요한 스키마를 추출한다. 질의 재작성은 정답 스키마 누락을 줄이지만 잡음도 늘린다는 상충관계를 실험으로 보여준다. Spider 2.0-Lite에서 오픈소스 LLM만으로 33.09%를 기록했으나 명시적인 온톨로지·조인 경로 추론은 없다.
